@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="WelcomePage_ButtonTextSize">26sp</dimen>
+
+    <dimen name="ArticleBrowseCollapsedCB">0dp</dimen>
+    <dimen name="ArticleBrowseExpandedCB">75dp</dimen>
+</resources>
