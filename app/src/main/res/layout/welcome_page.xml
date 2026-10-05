@@ -7,13 +7,62 @@
     android:layout_height="match_parent"
     tools:context=".WelcomePage">
 
+    <Button
+        android:id="@+id/WelcomePage_SignUp"
+        android:layout_width="294dp"
+        android:layout_height="76dp"
+        android:layout_marginStart="58dp"
+        android:layout_marginEnd="59dp"
+        android:layout_marginBottom="40dp"
+        android:text="@string/WelcomePage_SignUp"
+        android:textSize="@dimen/WelcomePage_ButtonTextSize"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/light_gray"
+        app:layout_constraintBottom_toTopOf="@+id/WelcomePage_forgotCreds"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:elevation="200dp"/>
+
     <TextView
+        android:id="@+id/WelcomePage_forgotCreds"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:layout_marginStart="179dp"
+        android:layout_marginEnd="179dp"
+        android:layout_marginBottom="88dp"
+        android:text="Fogot your username \n or password?"
+        android:textSize="16sp"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/WelcomePage_Logo"
+        android:layout_width="220dp"
+        android:layout_height="266dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="66dp"
+        android:layout_marginEnd="96dp"
+        android:src="@drawable/temp_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/WelcomePage_Login"
+        android:layout_width="294dp"
+        android:layout_height="76dp"
+        android:layout_marginStart="59dp"
+        android:layout_marginEnd="59dp"
+        android:layout_marginBottom="21dp"
+        android:backgroundTint="@color/light_gray"
+        android:elevation="@dimen/cardview_default_radius"
+        android:text="@string/WelcomePage_Login"
+        android:textColor="@color/black"
+        android:textSize="@dimen/WelcomePage_ButtonTextSize"
+        app:layout_constraintBottom_toTopOf="@+id/WelcomePage_SignUp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
