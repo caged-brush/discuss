@@ -44,10 +44,40 @@ public class DBHandler  extends SQLiteOpenHelper {
                 "ON DELETE CASCADE" +
                 ")");
 
+        db.execSQL("CREATE TABLE block (" +
+                "blocker_uid TEXT NOT NULL, " +
+                "blocked_uid TEXT NOT NULL, " +
+                "created_at INTEGER NOT NULL, " +
+                "PRIMARY KEY (blocker_uid, blocker_uid), " +
+                "CHECK (blocker_uid <> blocked_uid), " +
+                "FOREIGN KEY (blocker_uid) REFERENCES users(uid) " +
+                "ON DELETE CASCADE, " +
+                "FOREIGN KEY (blocked_uid) REFERENCES users(uid) " +
+                "ON DELETE CASCADE" +
+                ")"
+        );
+
+        db.execSQL(
+                "CREATE TABLE user_ratings (" +
+                        "rater_uid TEXT NOT NULL, " +
+                        "target_uid TEXT NOT NULL, " +
+                        "value INTEGER NOT NULL " +
+                        "CHECK (typeof(value)= 'integer' AND value BETWEEN 1 AND 5), " +
+                        "updated_at INTEGER NOT NULL, " +
+                        "PRIMARY KEY (rater_uid, target_uid), " +
+                        "CHECK (rater_uid <> target_uid), " +
+                        "FOREIGN KEY (rater_uid) REFERENCES users(uid) " +
+                        "ON DELETE CASCADE, " +
+                        "FOREIGN KEY (target_uid) REFERENCES users(uid) " +
+                        "ON DELETE CASCADE" +
+                        ")"
+        );
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+       throw new IllegalStateException(
+               "Missing database migration from " + oldVersion + " to " + newVersion
+       );
     }
 }
