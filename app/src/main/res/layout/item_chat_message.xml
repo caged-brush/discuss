@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/messageRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="start|top"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp">
+
+    <!-- Avatar placeholder -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/messageAvatar"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="8dp"
+        app:cardBackgroundColor="#C9D3DC"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp" />
+
+    <!-- Message bubble -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/messageBubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="#C9D3DC"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp"
+        app:strokeWidth="0dp">
+
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="240dp"
+            android:minHeight="48dp"
+            android:gravity="center_vertical"
+            android:padding="14dp"
+            android:textColor="#222222"
+            android:textSize="15sp"
+            tools:text="Contact's message" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
