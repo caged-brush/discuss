@@ -1,47 +1,110 @@
 <resources>
-    <string name="app_name">My Application</string>
-    //WELCOME PAGE STRINGS//
-    <string name="WelcomePage_ForgotCreds">forgot your username of password?</string>
+    <string name="app_name">Discuss</string>
+
+    <!-- Welcome page -->
+    <string name="WelcomePage_ForgotCreds">Forgot your username\nor password?</string>
     <string name="WelcomePage_Login"><b>Login</b></string>
     <string name="WelcomePage_SignUp"><b>Sign Up</b></string>
-    //WELCOME PAGE STRINGS//
+    <string name="forgot_title">Account recovery</string>
+    <string name="forgot_message">Discuss accounts are stored only on this device, so there is no email reset. Your username is shown on your profile once you log in. If you have lost your password, create a new account.</string>
 
-    <string name="ArticleBrowseRecyclerLoremIpsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
-    <string name="tempScrollText">Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+    <!-- Login / sign up -->
+    <string name="auth_login_title">Log in</string>
+    <string name="auth_signup_title">Create account</string>
+    <string name="auth_username">Username</string>
+    <string name="auth_username_helper">3–30 letters, numbers or underscores</string>
+    <string name="auth_first_name">First name</string>
+    <string name="auth_last_name">Last name</string>
+    <string name="auth_email">Email</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_password_helper">At least 12 characters</string>
+    <string name="auth_confirm_password">Confirm password</string>
+    <string name="auth_switch_to_signup">No account yet? Sign up</string>
+    <string name="auth_switch_to_login">Already have an account? Log in</string>
+    <string name="auth_wrong_credentials">Incorrect email or password.</string>
+    <string name="auth_password_mismatch">Passwords do not match.</string>
+    <string name="auth_failed">Something went wrong. Please try again.</string>
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+    <!-- Navigation -->
+    <string name="nav_toggle">Show or hide menu</string>
+    <string name="nav_contacts">Contacts</string>
+    <string name="nav_groups">Group chats</string>
+    <string name="nav_profile">My profile</string>
+    <string name="back">Back</string>
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+    <!-- Article browse / view -->
+    <string name="category_all">All</string>
+    <string name="category_saved">Saved</string>
+    <string name="browse_title">Discover</string>
+    <string name="browse_empty_saved">Articles you save will appear here.</string>
+    <string name="rating_summary">★ %1$.1f (%2$d)</string>
+    <string name="rating_none">No ratings yet</string>
+    <string name="article_byline">%1$s · %2$s</string>
+    <string name="article_rate_prompt">Rate this article</string>
+    <string name="article_your_rating">Your rating: %1$d / 5</string>
+    <string name="article_save">Save to Library</string>
+    <string name="article_unsave">Remove from Library</string>
+    <string name="article_saved_toast">Saved to your library</string>
+    <string name="article_share">Share to group</string>
+    <string name="article_share_new_group">+ New group chat</string>
+    <string name="article_shared_toast">Shared to %1$s</string>
+    <string name="article_not_found">This article is no longer available.</string>
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+    <!-- Contacts -->
+    <string name="contacts_add_title">Add contact</string>
+    <string name="contacts_add_hint">Their username</string>
+    <string name="contacts_add">Add</string>
+    <string name="contacts_not_found">No user called \"%1$s\".</string>
+    <string name="contacts_self">You cannot add yourself.</string>
+    <string name="contacts_blocked">Unblock this user first.</string>
+    <string name="contacts_exists">Already in your contacts.</string>
+    <string name="contacts_added">Added %1$s</string>
+    <string name="contacts_empty">No contacts yet. Tap + and enter a friend\'s username.</string>
+    <string name="contacts_remove_title">Remove contact</string>
+    <string name="contacts_remove_message">Remove %1$s from your contacts?</string>
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+    <!-- Profile -->
+    <string name="profile_username">\@%1$s</string>
+    <string name="profile_rate_prompt">Your rating of %1$s</string>
+    <string name="profile_recent_articles">Recently rated articles</string>
+    <string name="profile_no_articles">No rated articles yet.</string>
+    <string name="profile_add_contact">Add to contacts</string>
+    <string name="profile_remove_contact">Remove from contacts</string>
+    <string name="profile_block">Block user</string>
+    <string name="profile_unblock">Unblock user</string>
+    <string name="profile_blocked_banner">You blocked this user. Their messages are hidden.</string>
+    <string name="profile_logout">Log out</string>
+    <string name="profile_actions">Profile actions</string>
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+    <!-- Groups -->
+    <string name="groups_title">Group chats</string>
+    <string name="groups_empty">No group chats yet. Tap + to start one.</string>
+    <string name="groups_no_messages">No messages yet</string>
+    <string name="create_group_title_hint">Add Group Chat Title</string>
+    <string name="create_group_contacts">Contacts</string>
+    <string name="create_group_article">Attach a saved article (optional)</string>
+    <string name="create_group_no_contacts">Add contacts first to invite them.</string>
+    <string name="create_group_no_saved">Save an article to attach it here.</string>
+    <string name="create_group_submit">Create Group</string>
+    <string name="create_group_need_title">Give the group a title.</string>
+    <string name="create_group_need_member">Pick at least one contact.</string>
+    <string name="chat_hint">Message…</string>
+    <string name="chat_send">Send message</string>
+    <string name="chat_shared_article">📄 %1$s\nTap to read</string>
+    <string name="chat_members_title">Members</string>
+    <string name="chat_add_member">Add member</string>
+    <string name="chat_open_article">Open discussed article</string>
+    <string name="chat_leave">Leave group</string>
+    <string name="chat_no_contacts_to_add">All your contacts are already in this group.</string>
+    <string name="chat_options">Group options</string>
+    <string name="chat_not_member">You are no longer in this group.</string>
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
-lor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.</string>
-
+    <plurals name="profile_rating_summary">
+        <item quantity="one">%1$.1f from %2$d rating</item>
+        <item quantity="other">%1$.1f from %2$d ratings</item>
+    </plurals>
+    <plurals name="groups_members">
+        <item quantity="one">%1$d member</item>
+        <item quantity="other">%1$d members</item>
+    </plurals>
 </resources>

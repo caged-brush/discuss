@@ -22,6 +22,13 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".AuthActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".GroupListActivity"
+            android:exported="false" />
+        <activity
             android:name=".ArticleBrowse"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
@@ -42,7 +49,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".group_chat"
+            android:name=".GroupChatActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>

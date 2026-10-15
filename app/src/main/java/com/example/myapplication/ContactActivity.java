@@ -1,84 +1,126 @@
 package com.example.myapplication;
 
-import android.database.Cursor;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import java.util.ArrayList;
 import java.util.List;
-import android.widget.ImageButton;
 
-public class ContactActivity extends AppCompatActivity {
+public class ContactActivity extends AppCompatActivity implements ContactAdapter.Listener {
 
     private RecyclerView rvContacts;
-    private FloatingActionButton fabAddContact;
-    private ImageButton btnTopAddContact;
-    private ContactAdapter adapter;
-    private List<ContactItem> contactList;
+    private TextView tvEmpty;
+    private List<UserProfile> contactList;
     private DBHandler dbHandler;
-    
-    // In a real app, this would be passed via Intent or fetched from a session manager
-    private String currentUserUid = "user1"; 
+    private String currentUserUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        currentUserUid = Session.requireUser(this);
+        if (currentUserUid == null) {
+            return;
+        }
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_contact);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
-        dbHandler = new DBHandler(this);
+        dbHandler = DBHandler.getInstance(this);
         rvContacts = findViewById(R.id.rvContacts);
-        fabAddContact = findViewById(R.id.fabAddContact);
-        btnTopAddContact = findViewById(R.id.btnTopAddContact);
-        
+        tvEmpty = findViewById(R.id.tvContactsEmpty);
         rvContacts.setLayoutManager(new LinearLayoutManager(this));
-        
-        loadContacts();
 
-        fabAddContact.setOnClickListener(v -> showAddContactDialog());
-        btnTopAddContact.setOnClickListener(v -> showAddContactDialog());
+        findViewById(R.id.btnContactsBack).setOnClickListener(v -> finish());
+        findViewById(R.id.fabAddContact).setOnClickListener(v -> showAddContactDialog());
+        findViewById(R.id.btnTopAddContact).setOnClickListener(v -> showAddContactDialog());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (dbHandler != null) {
+            // The profile screen can add, remove or block contacts
+            loadContacts();
+        }
     }
 
     private void loadContacts() {
-        contactList = new ArrayList<>();
-        Cursor cursor = dbHandler.getContacts(currentUserUid);
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                String uid = cursor.getString(cursor.getColumnIndexOrThrow("uid"));
-                String username = cursor.getString(cursor.getColumnIndexOrThrow("username"));
-                String firstName = cursor.getString(cursor.getColumnIndexOrThrow("first_name"));
-                String lastName = cursor.getString(cursor.getColumnIndexOrThrow("last_name"));
-                String info = "@" + username;
-                String name = firstName + " " + lastName;
-                if (name.trim().isEmpty()) {
-                    name = username;
-                }
-                contactList.add(new ContactItem(uid, name, info));
-            }
-            cursor.close();
-        }
+        contactList = dbHandler.getContacts(currentUserUid);
+        rvContacts.setAdapter(new ContactAdapter(contactList, this));
+        updateEmptyState();
+    }
 
-        adapter = new ContactAdapter(contactList, dbHandler, currentUserUid);
-        rvContacts.setAdapter(adapter);
+    private void updateEmptyState() {
+        tvEmpty.setVisibility(contactList.isEmpty() ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onContactClick(UserProfile contact) {
+        startActivity(ProfileActivity.intent(this, contact.getUid()));
+    }
+
+    @Override
+    public void onContactRemoved(UserProfile contact) {
+        dbHandler.removeContact(currentUserUid, contact.getUid());
+        updateEmptyState();
     }
 
     private void showAddContactDialog() {
         EditText input = new EditText(this);
-        input.setHint("Enter User UID");
+        input.setHint(R.string.contacts_add_hint);
+        input.setSingleLine(true);
+        int padding = (int) (20 * getResources().getDisplayMetrics().density);
+        FrameLayout container = new FrameLayout(this);
+        container.setPadding(padding, padding / 2, padding, 0);
+        container.addView(input);
+
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Add Contact")
-                .setView(input)
-                .setPositiveButton("Add", (dialog, which) -> {
-                    String contactUid = input.getText().toString().trim();
-                    if (!contactUid.isEmpty() && !contactUid.equals(currentUserUid)) {
-                        dbHandler.addContact(currentUserUid, contactUid);
-                        loadContacts(); // Refresh list
-                    }
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .setTitle(R.string.contacts_add_title)
+                .setView(container)
+                .setPositiveButton(R.string.contacts_add, (dialog, which) ->
+                        addContactByUsername(input.getText().toString().trim()))
+                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss())
                 .show();
+    }
+
+    private void addContactByUsername(String username) {
+        if (username.startsWith("@")) {
+            username = username.substring(1);
+        }
+        if (username.isEmpty()) {
+            return;
+        }
+        UserProfile user = dbHandler.findUserByUsername(username);
+        String error = null;
+        if (user == null) {
+            error = getString(R.string.contacts_not_found, username);
+        } else if (user.getUid().equals(currentUserUid)) {
+            error = getString(R.string.contacts_self);
+        } else if (dbHandler.isBlocked(currentUserUid, user.getUid())) {
+            error = getString(R.string.contacts_blocked);
+        } else if (!dbHandler.addContact(currentUserUid, user.getUid())) {
+            error = getString(R.string.contacts_exists);
+        }
+        if (error != null) {
+            Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Toast.makeText(this, getString(R.string.contacts_added, user.getDisplayName()),
+                Toast.LENGTH_SHORT).show();
+        loadContacts();
     }
 }

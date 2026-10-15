@@ -27,6 +27,15 @@ public final class AuthRepository {
         if (password == null || password.length < 12 || password.length > 128) {
             throw new IllegalArgumentException("Use a password containing 12-128 characters.");
         }
+        if (helper.findUserByUsername(username) != null) {
+            throw new IllegalArgumentException("That username is already taken.");
+        }
+        try (Cursor c = helper.getReadableDatabase().rawQuery(
+                "SELECT 1 FROM credentials WHERE email = ?", new String[]{email})) {
+            if (c.moveToFirst()) {
+                throw new IllegalArgumentException("An account with that email already exists.");
+            }
+        }
         byte[] salt = PasswordHasher.newSalt();
         byte[] hash = PasswordHasher.hash(password, salt, PasswordHasher.ITERATIONS);
         String uid = UUID.randomUUID().toString();

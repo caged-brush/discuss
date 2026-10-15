@@ -10,5 +10,17 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <!-- Round icon button used in the article browse side bar -->
+    <style name="NavRailButton">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:background">@drawable/temp_icon</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="tint">@color/white</item>
+    </style>
+
     <style name="Theme.MyApplication" parent="Base.Theme.MyApplication" />
 </resources>

@@ -32,17 +32,34 @@
         app:cardElevation="0dp"
         app:strokeWidth="0dp">
 
-        <TextView
-            android:id="@+id/tvMessage"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="240dp"
             android:minHeight="48dp"
             android:gravity="center_vertical"
-            android:padding="14dp"
-            android:textColor="#222222"
-            android:textSize="15sp"
-            tools:text="Contact's message" />
+            android:orientation="vertical"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp">
+
+            <!-- Hidden on your own messages -->
+            <TextView
+                android:id="@+id/tvSender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#455A64"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="Alex" />
+
+            <TextView
+                android:id="@+id/tvMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="240dp"
+                android:textColor="#222222"
+                android:textSize="15sp"
+                tools:text="Contact's message" />
+        </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
 

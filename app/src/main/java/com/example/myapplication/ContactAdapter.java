@@ -11,35 +11,22 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import java.util.List;
 
-class ContactItem {
-    private String contactUid;
-    private String name;
-    private String info;
-
-    public ContactItem(String contactUid, String name, String info) {
-        this.contactUid = contactUid;
-        this.name = name;
-        this.info = info;
-    }
-
-    public String getContactUid() { return contactUid; }
-    public String getName() { return name; }
-    public String getInfo() { return info; }
-}
-
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
 
-    private List<ContactItem> contactList;
-    private DBHandler dbHandler;
-    private String ownerUid;
-
-    public ContactAdapter(List<ContactItem> contactList, DBHandler dbHandler, String ownerUid) {
-        this.contactList = contactList;
-        this.dbHandler = dbHandler;
-        this.ownerUid = ownerUid;
+    public interface Listener {
+        void onContactClick(UserProfile contact);
+        void onContactRemoved(UserProfile contact);
     }
 
-    // Create single View（load item_contact.xml）
+    private final List<UserProfile> contactList;
+    private final Listener listener;
+
+    public ContactAdapter(List<UserProfile> contactList, Listener listener) {
+        this.contactList = contactList;
+        this.listener = listener;
+    }
+
+    // Create single View (load item_contact.xml)
     @NonNull
     @Override
     public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -48,29 +35,31 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         return new ContactViewHolder(view);
     }
 
-    // bind data to single View
+    // Bind data to single View
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
-        ContactItem currentItem = contactList.get(position);
+        UserProfile currentItem = contactList.get(position);
 
-        holder.tvName.setText(currentItem.getName());
-        holder.tvInfo.setText(currentItem.getInfo());
+        holder.tvName.setText(currentItem.getDisplayName());
+        holder.tvInfo.setText(holder.itemView.getContext()
+                .getString(R.string.profile_username, currentItem.getUsername()));
+        holder.itemView.setOnClickListener(v -> listener.onContactClick(currentItem));
 
-        // comfirm popup
+        // Confirm popup
         holder.btnRemove.setOnClickListener(v -> {
-            int currentPos = holder.getAdapterPosition();
+            int currentPos = holder.getBindingAdapterPosition();
             if (currentPos == RecyclerView.NO_POSITION) return;
 
             new MaterialAlertDialogBuilder(v.getContext())
-                    .setTitle("Remove Contact")
-                    .setMessage("Are you sure you want to remove " + currentItem.getName() + "?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        dbHandler.removeContact(ownerUid, currentItem.getContactUid());
+                    .setTitle(R.string.contacts_remove_title)
+                    .setMessage(v.getContext().getString(R.string.contacts_remove_message,
+                            currentItem.getDisplayName()))
+                    .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                         contactList.remove(currentPos);
                         notifyItemRemoved(currentPos);
-                        notifyItemRangeChanged(currentPos, contactList.size() - currentPos);
+                        listener.onContactRemoved(currentItem);
                     })
-                    .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                    .setNegativeButton(android.R.string.no, (dialog, which) -> dialog.dismiss())
                     .show();
         });
     }

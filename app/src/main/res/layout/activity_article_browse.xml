@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
-    android:id="@+id/main">
+    tools:context=".ArticleBrowse">
 
-
+    <!-- Collapsible navigation bar -->
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/article_browse_contact_button"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            style="@style/NavRailButton"
             android:layout_marginStart="10dp"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="5dp"
-            android:background="@drawable/temp_icon" />
-
+            android:contentDescription="@string/nav_toggle"
+            android:src="@drawable/ic_nav_menu" />
 
         <FrameLayout
             android:id="@+id/article_browse_contactBar"
-            android:layout_width="75dp"
-            android:layout_height="723dp"
-            android:layout_marginBottom="24dp"
-
-            >
+            android:layout_width="@dimen/ArticleBrowseExpandedCB"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -36,84 +36,85 @@
                 android:layout_gravity="center_horizontal"
                 android:orientation="vertical"
                 android:paddingTop="15dp"
-                android:paddingBottom="15dp"
-                android:backgroundTint="@color/light_gray"
-                >
+                android:paddingBottom="15dp">
 
                 <androidx.appcompat.widget.AppCompatImageButton
-                    android:layout_width="65dp"
-                    android:layout_height="65dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/temp_icon" />
+                    android:id="@+id/nav_contacts"
+                    style="@style/NavRailButton"
+                    android:contentDescription="@string/nav_contacts"
+                    android:src="@drawable/ic_nav_contacts"
+                    android:tooltipText="@string/nav_contacts" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
-                    android:layout_width="65dp"
-                    android:layout_height="65dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/temp_icon" />
+                    android:id="@+id/nav_groups"
+                    style="@style/NavRailButton"
+                    android:contentDescription="@string/nav_groups"
+                    android:src="@drawable/ic_nav_chat"
+                    android:tooltipText="@string/nav_groups" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
-                    android:layout_width="65dp"
-                    android:layout_height="65dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:background="@drawable/temp_icon" />
+                    android:id="@+id/nav_profile"
+                    style="@style/NavRailButton"
+                    android:contentDescription="@string/nav_profile"
+                    android:src="@drawable/ic_nav_profile"
+                    android:tooltipText="@string/nav_profile" />
             </LinearLayout>
-
-
         </FrameLayout>
-
     </LinearLayout>
-
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         android:orientation="vertical">
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="363dp"
-            android:layout_height="43dp"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:paddingEnd="5dp">
 
-            <Button
-                android:id="@+id/article_browse_economics"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:paddingHorizontal="8dp"
+            android:text="@string/browse_title"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/article_browse_categories"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="3dp"
-                android:text="economics"/>
-            <Button
-                android:id="@+id/testButton"
-                android:layout_width="wrap_content"
+                android:paddingHorizontal="8dp"
+                app:selectionRequired="true"
+                app:singleLine="true"
+                app:singleSelection="true" />
+        </HorizontalScrollView>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/article_browse_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingHorizontal="4dp"
+                android:paddingBottom="20dp" />
+
+            <TextView
+                android:id="@+id/article_browse_empty"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"/>
-
-
-        </LinearLayout>
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/article_browse_recycler"
-            android:layout_width="363dp"
-            android:layout_height="779dp"
-            android:layout_marginBottom="20dp"/>
-
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="24dp"
+                android:textColor="?android:attr/textColorSecondary"
+                android:visibility="gone" />
+        </FrameLayout>
     </LinearLayout>
-
-
-
-
-
-
-
-
 </LinearLayout>

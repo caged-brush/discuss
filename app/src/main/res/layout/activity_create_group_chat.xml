@@ -26,7 +26,8 @@
             android:backgroundTint="#C7D1D9"
             android:background="#C7D1D9"
             android:gravity="center"
-            android:hint="Add Group Chat Title"
+            android:hint="@string/create_group_title_hint"
+            android:importantForAutofill="no"
             android:inputType="textCapWords"
             android:maxLength="60"
             android:maxLines="1"
@@ -43,7 +44,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="12dp"
             android:gravity="center"
-            android:text="Contacts"
+            android:text="@string/create_group_contacts"
             android:textColor="#000000"
             android:textSize="26sp"
             android:textStyle="bold" />
@@ -57,121 +58,48 @@
             android:padding="4dp"
             android:scrollbars="vertical">
 
+            <!-- One toggle button per contact is added in CreateGroupChat -->
             <LinearLayout
                 android:id="@+id/contactsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#FFFFFF"
                 android:orientation="vertical"
-                android:padding="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnContact1"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:backgroundTint="#666666"
-                    android:text="Contact username 1"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnContact2"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:backgroundTint="#666666"
-                    android:text="Contact username 2"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnContact3"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:backgroundTint="#666666"
-                    android:text="Contact username 3"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnContact4"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:backgroundTint="#666666"
-                    android:text="Contact username 4"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnContact5"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:backgroundTint="#666666"
-                    android:text="Contact username 5"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnContact6"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:backgroundTint="#666666"
-                    android:text="Contact username 6"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF" />
-
-            </LinearLayout>
+                android:padding="4dp" />
         </ScrollView>
+
+        <TextView
+            android:id="@+id/txtSavedArticles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/create_group_article"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <ScrollView
             android:id="@+id/scrollSavedArticles"
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="8dp"
             android:background="#C7D1D9"
             android:padding="4dp"
             android:scrollbars="vertical">
 
+            <!-- One toggle button per saved article is added in CreateGroupChat -->
             <LinearLayout
                 android:id="@+id/articlesContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#FFFFFF"
                 android:orientation="vertical"
-                android:padding="4dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnArticle1"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:backgroundTint="#FF0000"
-                    android:text="Chosen Saved Article"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnArticle2"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:backgroundTint="#666666"
-                    android:text="Saved Article"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnArticle3"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:backgroundTint="#666666"
-                    android:text="Saved Article"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF" />
-
-            </LinearLayout>
+                android:padding="4dp" />
         </ScrollView>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnShareArticle"
+            android:id="@+id/btnCreateGroup"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
@@ -179,7 +107,7 @@
             android:backgroundTint="#C7D1D9"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
-            android:text="Share Article"
+            android:text="@string/create_group_submit"
             android:textAllCaps="false"
             android:textColor="#000000"
             android:textSize="18sp"

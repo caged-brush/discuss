@@ -1,32 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingTop="20dp"
-    android:paddingStart="5dp"
-    android:paddingEnd="10dp"
-    android:paddingBottom="20dp">
+    android:layout_margin="5dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="12dp">
 
-    <TextView
-        android:id="@+id/article_browse_recycler_article_title"
-        android:layout_width="150dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Article Title"
-        android:textSize="30sp"
-        android:gravity="center"
-     />
+        android:orientation="vertical"
+        android:padding="12dp">
 
+        <TextView
+            android:id="@+id/article_browse_recycler_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            tools:text="Economics" />
 
-    <TextView
-        android:id="@+id/article_browse_recycler_thumbnail_text"
-        android:layout_width="150dp"
-        android:layout_height="300dp"
-        android:paddingEnd="10dp"
-        android:gravity="center_horizontal"
-        android:text="uiodafhiuhdfiuashfidsahfisdahfiuasdhuifhdsauihfuisadhfiuoviodafhiuhdfiuashfidsahfisdahfiuiodafhiuhdiodafhiuhdfiuashfidsahfisdahfiuasdhuifhdsauihfuisadhfiuovsdvjasd bvuysfiuashfidsahfisdahfiuasdhuifhdsauihfuisadhfiuovsdvjasd bvuysasdhuifhdsauihfuisadhfiuovsdvjasd bvuyssdvjasd bvuysagm nfweHWEFHUFIH ASD[I AHFIUDSAH IF HSDA"
-        android:textSize="15sp"
-       />
+        <TextView
+            android:id="@+id/article_browse_recycler_article_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:text="Article Title" />
 
+        <TextView
+            android:id="@+id/article_browse_recycler_thumbnail_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:maxLines="5"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="13sp"
+            tools:text="A short preview of the article body." />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/article_browse_recycler_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="12sp"
+            tools:text="★ 4.2 (5)" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

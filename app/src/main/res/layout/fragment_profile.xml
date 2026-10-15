@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/main"
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground">
 
@@ -24,7 +25,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"
+            android:contentDescription="@string/back"
             android:src="@android:drawable/ic_menu_revert"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -37,8 +38,8 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Profile Actions"
-            android:src="@android:drawable/ic_menu_edit"
+            android:contentDescription="@string/profile_actions"
+            android:src="@android:drawable/ic_menu_more"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -111,16 +112,81 @@
                 app:layout_constraintTop_toBottomOf="@id/ratingBarUser"
                 tools:text="Alex Mercer" />
 
+            <TextView
+                android:id="@+id/tvUserHandle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvUserName"
+                tools:text="\@alex" />
+
+            <TextView
+                android:id="@+id/tvRatingSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvUserHandle"
+                tools:text="4.5 from 2 ratings" />
+
+            <TextView
+                android:id="@+id/tvBlockedBanner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="@string/profile_blocked_banner"
+                android:textColor="?attr/colorError"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvRatingSummary" />
+
+            <!-- Rate this user (hidden on your own profile) -->
+            <LinearLayout
+                android:id="@+id/layoutRateUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvBlockedBanner">
+
+                <TextView
+                    android:id="@+id/tvRateUserPrompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textSize="16sp"
+                    tools:text="Your rating of Alex" />
+
+                <RatingBar
+                    android:id="@+id/ratingBarRateUser"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:numStars="5"
+                    android:stepSize="1" />
+            </LinearLayout>
+
             <!-- Structural Divider -->
             <View
                 android:id="@+id/divider"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="24dp"
                 android:background="?android:attr/listDivider"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvUserName" />
+                app:layout_constraintTop_toBottomOf="@id/layoutRateUser" />
 
             <!-- Recent Articles Label (Centered Serif Heading) -->
             <TextView
@@ -130,7 +196,7 @@
                 android:layout_marginTop="20dp"
                 android:gravity="center"
                 android:letterSpacing="0.04"
-                android:text="Recent Articles"
+                android:text="@string/profile_recent_articles"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -150,7 +216,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvRecentArticlesLabel"
                 tools:itemCount="3"
-                tools:listitem="@android:layout/simple_list_item_2" />
+                tools:listitem="@layout/article_browse_recycler_view_model" />
+
+            <TextView
+                android:id="@+id/tvNoRecentArticles"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="@string/profile_no_articles"
+                android:textColor="?android:attr/textColorSecondary"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rvRecentArticles" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
