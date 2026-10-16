@@ -117,13 +117,17 @@ public class ArticleView extends AppCompatActivity {
         btnSave.setIconResource(saved ? R.drawable.ic_bookmark : R.drawable.ic_bookmark_border);
     }
 
-    /** Lets the user post the article into one of their groups, or start a new group. */
+    /**
+     * Lets the user post the article into one of their chats, start a new group around it, or
+     * recommend it to a single contact (a direct chat).
+     */
     private void showShareDialog(Article article) {
         List<ChatGroup> groups = db.getGroupsForUser(uid);
-        String[] labels = new String[groups.size() + 1];
+        String[] labels = new String[groups.size() + 2];
         labels[0] = getString(R.string.article_share_new_group);
+        labels[1] = getString(R.string.article_recommend);
         for (int i = 0; i < groups.size(); i++) {
-            labels[i + 1] = groups.get(i).getName();
+            labels[i + 2] = groups.get(i).getName();
         }
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.article_share_title)
@@ -133,13 +137,40 @@ public class ArticleView extends AppCompatActivity {
                         db.saveArticle(uid, articleId);
                         refreshSaved();
                         startActivity(CreateGroupChat.intent(this, articleId));
-                        return;
+                    } else if (which == 1) {
+                        showRecommendDialog(article);
+                    } else {
+                        ChatGroup group = groups.get(which - 2);
+                        db.sendMessage(group.getId(), uid, "", article.getId());
+                        Toast.makeText(this, getString(R.string.article_shared_toast, group.getName()),
+                                Toast.LENGTH_SHORT).show();
+                        startActivity(GroupChatActivity.intent(this, group.getId()));
                     }
-                    ChatGroup group = groups.get(which - 1);
-                    db.sendMessage(group.getId(), uid, "", article.getId());
-                    Toast.makeText(this, getString(R.string.article_shared_toast, group.getName()),
-                            Toast.LENGTH_SHORT).show();
-                    startActivity(GroupChatActivity.intent(this, group.getId()));
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    /** Picks one contact and sends them the article in a direct chat. */
+    private void showRecommendDialog(Article article) {
+        List<UserProfile> contacts = db.getContacts(uid);
+        if (contacts.isEmpty()) {
+            Toast.makeText(this, R.string.article_recommend_no_contacts, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String[] names = new String[contacts.size()];
+        for (int i = 0; i < contacts.size(); i++) {
+            names[i] = contacts.get(i).getDisplayName();
+        }
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.article_recommend_pick)
+                .setItems(names, (dialog, which) -> {
+                    UserProfile contact = contacts.get(which);
+                    String chatId = db.getOrCreateDirectGroup(uid, contact.getUid());
+                    db.sendMessage(chatId, uid, "", article.getId());
+                    Toast.makeText(this, getString(R.string.article_recommended_toast,
+                            contact.getDisplayName()), Toast.LENGTH_SHORT).show();
+                    startActivity(GroupChatActivity.intent(this, chatId));
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();

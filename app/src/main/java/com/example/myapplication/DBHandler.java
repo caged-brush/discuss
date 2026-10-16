@@ -25,7 +25,7 @@ import java.util.UUID;
  */
 public class DBHandler extends SQLiteOpenHelper {
     private static final String DB_NAME = "discuss";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 3;
 
     private static DBHandler instance;
     private final Context appContext;
@@ -156,6 +156,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 "CREATE TABLE chat_groups (" +
                         "group_id TEXT PRIMARY KEY NOT NULL, " +
                         "group_name TEXT NOT NULL, " +
+                        "is_direct INTEGER NOT NULL DEFAULT 0, " +
                         "creator_uid TEXT NOT NULL, " +
                         "article_id TEXT, " +
                         "created_at INTEGER NOT NULL, " +
@@ -182,6 +183,9 @@ public class DBHandler extends SQLiteOpenHelper {
                         "group_id TEXT NOT NULL, " +
                         "sender_uid TEXT NOT NULL, " +
                         "body TEXT NOT NULL DEFAULT '', " +
+                        "media_type TEXT, " +
+                        "media_path TEXT, " +
+                        "media_duration INTEGER NOT NULL DEFAULT 0, " +
                         "article_id TEXT, " +
                         "sent_at INTEGER NOT NULL, " +
                         "FOREIGN KEY (group_id) REFERENCES chat_groups(group_id) ON DELETE CASCADE, " +
@@ -190,6 +194,7 @@ public class DBHandler extends SQLiteOpenHelper {
                         ")"
         );
         db.execSQL("CREATE INDEX messages_by_group ON messages(group_id, sent_at)");
+        createVideosTable(db);
 
         seedArticles(db);
     }
@@ -198,9 +203,9 @@ public class DBHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Version 1 was never released, so its data is discarded instead of migrated.
         if (oldVersion < 2) {
-            String[] tables = {"messages", "group_members", "chat_groups", "article_ratings",
-                    "saved_articles", "articles", "user_ratings", "block", "contacts",
-                    "credentials", "users"};
+            String[] tables = {"videos", "messages", "group_members", "chat_groups",
+                    "article_ratings", "saved_articles", "articles", "user_ratings", "block",
+                    "contacts", "credentials", "users"};
             db.setForeignKeyConstraintsEnabled(false);
             for (String table : tables) {
                 db.execSQL("DROP TABLE IF EXISTS " + table);
@@ -209,9 +214,36 @@ public class DBHandler extends SQLiteOpenHelper {
             onCreate(db);
             return;
         }
+        if (oldVersion == 2 && newVersion >= 3) {
+            // v3: photos and voice messages, direct chats, and the video section
+            db.execSQL("ALTER TABLE chat_groups ADD COLUMN is_direct INTEGER NOT NULL DEFAULT 0");
+            db.execSQL("ALTER TABLE messages ADD COLUMN media_type TEXT");
+            db.execSQL("ALTER TABLE messages ADD COLUMN media_path TEXT");
+            db.execSQL("ALTER TABLE messages ADD COLUMN media_duration INTEGER NOT NULL DEFAULT 0");
+            createVideosTable(db);
+            return;
+        }
         throw new IllegalStateException(
                 "Missing database migration from " + oldVersion + " to " + newVersion
         );
+    }
+
+    /** Uploaded videos; the files themselves live in the app's private videos folder. */
+    private static void createVideosTable(SQLiteDatabase db) {
+        db.execSQL(
+                "CREATE TABLE videos (" +
+                        "video_id TEXT PRIMARY KEY NOT NULL, " +
+                        "uploader_uid TEXT NOT NULL, " +
+                        "title TEXT NOT NULL, " +
+                        "description TEXT NOT NULL DEFAULT '', " +
+                        "file_name TEXT NOT NULL, " +
+                        "thumb_name TEXT NOT NULL DEFAULT '', " +
+                        "duration_ms INTEGER NOT NULL DEFAULT 0, " +
+                        "created_at INTEGER NOT NULL, " +
+                        "FOREIGN KEY (uploader_uid) REFERENCES users(uid) ON DELETE CASCADE" +
+                        ")"
+        );
+        db.execSQL("CREATE INDEX videos_by_time ON videos(created_at)");
     }
 
     private void seedArticles(SQLiteDatabase db) {
@@ -515,18 +547,36 @@ public class DBHandler extends SQLiteOpenHelper {
                 groupId, uid);
     }
 
-    public ChatGroup getGroup(String groupId) {
+    /**
+     * The viewer is needed because a direct chat is named after the other person.
+     * Returns null if the group does not exist.
+     */
+    public ChatGroup getGroup(String groupId, String viewerUid) {
         try (Cursor c = getReadableDatabase().rawQuery(
                 "SELECT g.group_id, g.group_name, g.article_id, " +
-                        "(SELECT COUNT(*) FROM group_members m WHERE m.group_id = g.group_id) " +
+                        "(SELECT COUNT(*) FROM group_members m WHERE m.group_id = g.group_id), " +
+                        "g.is_direct, " +
+                        "(SELECT p.member_uid FROM group_members p WHERE p.group_id = g.group_id " +
+                        " AND p.member_uid <> ? LIMIT 1) " +
                         "FROM chat_groups g WHERE g.group_id = ?",
-                new String[]{groupId})) {
+                new String[]{viewerUid, groupId})) {
             if (!c.moveToFirst()) {
                 return null;
             }
-            return new ChatGroup(c.getString(0), c.getString(1), c.getString(2), c.getInt(3),
-                    null, 0);
+            return buildGroup(c.getString(0), c.getString(1), c.getString(2), c.getInt(3),
+                    null, 0, c.getInt(4) == 1, c.getString(5));
         }
+    }
+
+    private ChatGroup buildGroup(String id, String name, String articleId, int memberCount,
+                                 String lastMessage, long lastActive, boolean direct,
+                                 String peerUid) {
+        if (direct) {
+            UserProfile peer = peerUid == null ? null : getUser(peerUid);
+            name = peer != null ? peer.getDisplayName() : appContext.getString(R.string.chat_direct);
+        }
+        return new ChatGroup(id, name, articleId, memberCount, lastMessage, lastActive,
+                direct, peerUid);
     }
 
     /** Groups the user belongs to, most recently active first. */
@@ -535,21 +585,63 @@ public class DBHandler extends SQLiteOpenHelper {
         try (Cursor c = getReadableDatabase().rawQuery(
                 "SELECT g.group_id, g.group_name, g.article_id, " +
                         "(SELECT COUNT(*) FROM group_members m2 WHERE m2.group_id = g.group_id), " +
-                        "(SELECT CASE WHEN msg.body <> '' THEN msg.body ELSE '📄 ' || a.title END " +
+                        "(SELECT CASE WHEN msg.body <> '' THEN msg.body " +
+                        "  WHEN msg.media_type = 'image' THEN '\uD83D\uDCF7 Photo' " +
+                        "  WHEN msg.media_type = 'audio' THEN '\uD83C\uDF99 Voice message' " +
+                        "  ELSE '\uD83D\uDCC4 ' || a.title END " +
                         " FROM messages msg LEFT JOIN articles a ON a.article_id = msg.article_id " +
                         " WHERE msg.group_id = g.group_id ORDER BY msg.message_id DESC LIMIT 1), " +
                         "IFNULL((SELECT MAX(sent_at) FROM messages msg WHERE msg.group_id = g.group_id), " +
-                        " g.created_at) AS last_active " +
+                        " g.created_at) AS last_active, " +
+                        "g.is_direct, " +
+                        "(SELECT p.member_uid FROM group_members p WHERE p.group_id = g.group_id " +
+                        " AND p.member_uid <> m.member_uid LIMIT 1) " +
                         "FROM chat_groups g " +
                         "INNER JOIN group_members m ON m.group_id = g.group_id " +
                         "WHERE m.member_uid = ? ORDER BY last_active DESC",
                 new String[]{uid})) {
             while (c.moveToNext()) {
-                groups.add(new ChatGroup(c.getString(0), c.getString(1), c.getString(2),
-                        c.getInt(3), c.getString(4), c.getLong(5)));
+                groups.add(buildGroup(c.getString(0), c.getString(1), c.getString(2),
+                        c.getInt(3), c.getString(4), c.getLong(5), c.getInt(6) == 1,
+                        c.getString(7)));
             }
         }
         return groups;
+    }
+
+    /**
+     * The one-to-one chat between two people, created on first use. Recommending an article to
+     * a contact is a message in this chat.
+     */
+    public String getOrCreateDirectGroup(String uidA, String uidB) {
+        try (Cursor c = getReadableDatabase().rawQuery(
+                "SELECT g.group_id FROM chat_groups g " +
+                        "INNER JOIN group_members a ON a.group_id = g.group_id AND a.member_uid = ? " +
+                        "INNER JOIN group_members b ON b.group_id = g.group_id AND b.member_uid = ? " +
+                        "WHERE g.is_direct = 1 LIMIT 1",
+                new String[]{uidA, uidB})) {
+            if (c.moveToFirst()) {
+                return c.getString(0);
+            }
+        }
+        String groupId = UUID.randomUUID().toString();
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put("group_id", groupId);
+            values.put("group_name", "");
+            values.put("is_direct", 1);
+            values.put("creator_uid", uidA);
+            values.put("created_at", System.currentTimeMillis());
+            db.insertOrThrow("chat_groups", null, values);
+            addMemberToGroup(groupId, uidA);
+            addMemberToGroup(groupId, uidB);
+            db.setTransactionSuccessful();
+            return groupId;
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public List<UserProfile> getGroupMembers(String groupId) {
@@ -573,12 +665,27 @@ public class DBHandler extends SQLiteOpenHelper {
         getWritableDatabase().insertOrThrow("messages", null, values);
     }
 
+    /** Sends a photo ("image") or a voice message ("audio"); mediaPath is a file name. */
+    public void sendMediaMessage(String groupId, String senderUid, String mediaType,
+                                 String mediaPath, long durationMs) {
+        ContentValues values = new ContentValues();
+        values.put("group_id", groupId);
+        values.put("sender_uid", senderUid);
+        values.put("body", "");
+        values.put("media_type", mediaType);
+        values.put("media_path", mediaPath);
+        values.put("media_duration", durationMs);
+        values.put("sent_at", System.currentTimeMillis());
+        getWritableDatabase().insertOrThrow("messages", null, values);
+    }
+
     /** Messages in send order, hiding anything from users the viewer has blocked. */
     public List<ChatMessage> getMessages(String groupId, String viewerUid) {
         List<ChatMessage> messages = new ArrayList<>();
         try (Cursor c = getReadableDatabase().rawQuery(
                 "SELECT msg.message_id, msg.sender_uid, u.username, u.first_name, u.last_name, " +
-                        "msg.body, msg.article_id, a.title, msg.sent_at " +
+                        "msg.body, msg.article_id, a.title, msg.sent_at, " +
+                        "msg.media_type, msg.media_path, msg.media_duration " +
                         "FROM messages msg " +
                         "INNER JOIN users u ON u.uid = msg.sender_uid " +
                         "LEFT JOIN articles a ON a.article_id = msg.article_id " +
@@ -590,10 +697,80 @@ public class DBHandler extends SQLiteOpenHelper {
                 UserProfile sender = new UserProfile(c.getString(1), c.getString(2),
                         c.getString(3), c.getString(4));
                 messages.add(new ChatMessage(c.getLong(0), sender, c.getString(5),
-                        c.getString(6), c.getString(7), c.getLong(8)));
+                        c.getString(6), c.getString(7), c.getString(9), c.getString(10),
+                        c.getLong(11), c.getLong(8)));
             }
         }
         return messages;
+    }
+
+    // ---------------------------------------------------------------- videos
+
+    private static final String VIDEO_SELECT =
+            "SELECT v.video_id, v.title, v.description, v.file_name, v.thumb_name, " +
+                    "v.duration_ms, v.created_at, u.uid, u.username, u.first_name, u.last_name " +
+                    "FROM videos v INNER JOIN users u ON u.uid = v.uploader_uid ";
+
+    /** Returns the new video's id. File names are relative to the app's videos folder. */
+    public String addVideo(String uploaderUid, String title, String description,
+                           String fileName, String thumbName, long durationMs) {
+        String id = UUID.randomUUID().toString();
+        ContentValues values = new ContentValues();
+        values.put("video_id", id);
+        values.put("uploader_uid", uploaderUid);
+        values.put("title", title);
+        values.put("description", description == null ? "" : description);
+        values.put("file_name", fileName);
+        values.put("thumb_name", thumbName == null ? "" : thumbName);
+        values.put("duration_ms", durationMs);
+        values.put("created_at", System.currentTimeMillis());
+        getWritableDatabase().insertOrThrow("videos", null, values);
+        return id;
+    }
+
+    private List<Video> readVideos(String sql, String[] args) {
+        List<Video> videos = new ArrayList<>();
+        try (Cursor c = getReadableDatabase().rawQuery(sql, args)) {
+            while (c.moveToNext()) {
+                UserProfile uploader = new UserProfile(c.getString(7), c.getString(8),
+                        c.getString(9), c.getString(10));
+                videos.add(new Video(c.getString(0), uploader, c.getString(1), c.getString(2),
+                        c.getString(3), c.getString(4), c.getLong(5), c.getLong(6)));
+            }
+        }
+        return videos;
+    }
+
+    /** Newest first, without videos from people the viewer has blocked. */
+    public List<Video> getVideos(String viewerUid) {
+        return readVideos(VIDEO_SELECT +
+                "WHERE v.uploader_uid NOT IN " +
+                "(SELECT blocked_uid FROM block WHERE blocker_uid = ?) " +
+                "ORDER BY v.created_at DESC", new String[]{viewerUid});
+    }
+
+    public List<Video> getVideosByUser(String uid) {
+        return readVideos(VIDEO_SELECT + "WHERE v.uploader_uid = ? ORDER BY v.created_at DESC",
+                new String[]{uid});
+    }
+
+    public Video getVideo(String videoId) {
+        List<Video> result = readVideos(VIDEO_SELECT + "WHERE v.video_id = ?",
+                new String[]{videoId});
+        return result.isEmpty() ? null : result.get(0);
+    }
+
+    /**
+     * Deletes the row if the requester uploaded it. Returns the deleted video so the caller can
+     * remove its files, or null if nothing was deleted.
+     */
+    public Video deleteVideo(String videoId, String requesterUid) {
+        Video video = getVideo(videoId);
+        if (video == null || !video.getUploader().getUid().equals(requesterUid)) {
+            return null;
+        }
+        getWritableDatabase().delete("videos", "video_id=?", new String[]{videoId});
+        return video;
     }
 
     // ---------------------------------------------------------------- helpers

@@ -63,6 +63,8 @@ public class ArticleBrowse extends AppCompatActivity {
                 startActivity(new Intent(this, ContactActivity.class)));
         findViewById(R.id.nav_groups).setOnClickListener(v ->
                 startActivity(new Intent(this, GroupListActivity.class)));
+        findViewById(R.id.nav_videos).setOnClickListener(v ->
+                startActivity(new Intent(this, VideoFeedActivity.class)));
         findViewById(R.id.nav_profile).setOnClickListener(v ->
                 startActivity(ProfileActivity.intent(this, uid)));
 

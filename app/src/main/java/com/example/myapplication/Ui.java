@@ -105,6 +105,16 @@ final class Ui {
         return DateUtils.formatDateTime(context, millis, flags);
     }
 
+    /** "Just now", "5 minutes ago", "Yesterday"... for a time in the past. */
+    static CharSequence timeAgo(Context context, long millis) {
+        long age = System.currentTimeMillis() - millis;
+        if (age < DateUtils.MINUTE_IN_MILLIS) {
+            return context.getString(R.string.video_just_now);
+        }
+        return DateUtils.getRelativeTimeSpanString(millis, System.currentTimeMillis(),
+                DateUtils.MINUTE_IN_MILLIS);
+    }
+
     static String timeOfDay(Context context, long millis) {
         return DateUtils.formatDateTime(context, millis, DateUtils.FORMAT_SHOW_TIME);
     }

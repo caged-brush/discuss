@@ -116,4 +116,61 @@
     <string name="create_group_invite">Invite contacts</string>
     <string name="create_group_selected">%1$d selected</string>
     <string name="chat_article_cta">Read article</string>
+
+    <!-- Chat media -->
+    <string name="chat_attach">Add photo</string>
+    <string name="chat_take_photo">Take photo</string>
+    <string name="chat_choose_photo">Choose from gallery</string>
+    <string name="chat_dictate">Dictate message</string>
+    <string name="chat_dictate_prompt">Speak your message</string>
+    <string name="chat_dictate_unavailable">Speech recognition isn\'t available on this device.</string>
+    <string name="chat_camera_unavailable">No camera app found on this device.</string>
+    <string name="chat_photo_failed">Couldn\'t add that photo.</string>
+    <string name="chat_voice_record">Record voice message</string>
+    <string name="chat_voice_cancel">Cancel recording</string>
+    <string name="chat_voice_permission">Allow microphone access to send voice messages.</string>
+    <string name="chat_voice_too_short">Recording too short. Try again.</string>
+    <string name="chat_voice_failed">Couldn\'t record audio.</string>
+    <string name="chat_voice_play">Play voice message</string>
+    <string name="chat_voice_pause">Pause voice message</string>
+    <string name="chat_recording">Recording…</string>
+    <string name="chat_photo">Photo</string>
+    <string name="chat_image_description">Shared photo</string>
+    <string name="chat_direct">Direct message</string>
+    <string name="chat_view_profile">View profile</string>
+    <string name="chat_leave_direct">Leave chat</string>
+    <string name="image_viewer_close">Close photo</string>
+
+    <!-- Recommending articles -->
+    <string name="article_recommend">Recommend to a contact…</string>
+    <string name="article_recommend_pick">Recommend to</string>
+    <string name="article_recommended_toast">Recommended to %1$s</string>
+    <string name="article_recommend_no_contacts">Add contacts first to recommend articles.</string>
+    <string name="profile_message">Send message</string>
+
+    <!-- Videos -->
+    <string name="nav_videos">Videos</string>
+    <string name="videos_title">Videos</string>
+    <string name="videos_subtitle">Watch and share what people make</string>
+    <string name="videos_empty">No videos yet.\nBe the first to upload one.</string>
+    <string name="videos_upload">Upload</string>
+    <string name="video_upload_title">Upload video</string>
+    <string name="video_choose">Choose video</string>
+    <string name="video_record">Record video</string>
+    <string name="video_title_hint">Title</string>
+    <string name="video_description_hint">Description (optional)</string>
+    <string name="video_publish">Publish</string>
+    <string name="video_no_selection">Pick a video from your gallery or record a new one.</string>
+    <string name="video_too_large">That video is larger than %1$d MB.</string>
+    <string name="video_unreadable">Couldn\'t open that video.</string>
+    <string name="video_publish_failed">Couldn\'t upload the video.</string>
+    <string name="video_published">Video published</string>
+    <string name="video_delete">Delete video</string>
+    <string name="video_delete_confirm">Delete this video? This can\'t be undone.</string>
+    <string name="video_deleted">Video deleted</string>
+    <string name="video_unavailable">This video file is missing.</string>
+    <string name="video_thumbnail">Video thumbnail</string>
+    <string name="profile_videos">Videos</string>
+    <string name="profile_no_videos">No videos yet.</string>
+    <string name="video_just_now">Just now</string>
 </resources>

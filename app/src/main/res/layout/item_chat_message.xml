@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/messageRow"
     android:layout_width="match_parent"
@@ -89,6 +90,58 @@
                         android:text="@string/chat_article_cta"
                         android:textSize="12sp" />
                 </LinearLayout>
+            </LinearLayout>
+
+            <!-- Photo -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivMessageImage"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginVertical="4dp"
+                android:background="#22000000"
+                android:contentDescription="@string/chat_image_description"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.Media"
+                tools:visibility="visible" />
+
+            <!-- Voice message -->
+            <LinearLayout
+                android:id="@+id/audioBlock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageButton
+                    android:id="@+id/btnPlayAudio"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_avatar"
+                    android:contentDescription="@string/chat_voice_play"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_play" />
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progressAudio"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:max="1000"
+                    app:trackCornerRadius="2dp"
+                    app:trackStopIndicatorSize="0dp"
+                    app:trackThickness="4dp" />
+
+                <TextView
+                    android:id="@+id/tvAudioDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="36dp"
+                    android:textSize="13sp"
+                    tools:text="0:12" />
             </LinearLayout>
 
             <TextView

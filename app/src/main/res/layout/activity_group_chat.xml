@@ -104,48 +104,140 @@
         tools:itemCount="4"
         tools:listitem="@layout/item_chat_message" />
 
-    <!-- Composer: pill-shaped field and a round send button -->
-    <LinearLayout
+    <!-- Composer. While a voice message is being recorded the first row is swapped for the second. -->
+    <FrameLayout
         android:id="@+id/messageComposer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?android:attr/colorBackground"
-        android:gravity="bottom"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:background="?android:attr/colorBackground">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/composerNormal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/bg_composer"
-            android:orientation="vertical">
+            android:gravity="bottom"
+            android:orientation="horizontal"
+            android:padding="10dp">
 
-            <EditText
-                android:id="@+id/etMessage"
-                android:layout_width="match_parent"
+            <ImageButton
+                android:id="@+id/btnAttach"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_circle_tonal"
+                android:contentDescription="@string/chat_attach"
+                android:src="@drawable/ic_add"
+                app:tint="?attr/colorOnSecondaryContainer" />
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:hint="@string/chat_hint"
-                android:importantForAutofill="no"
-                android:inputType="textCapSentences|textMultiLine"
-                android:maxLines="4"
-                android:minHeight="48dp"
-                android:paddingHorizontal="20dp"
-                android:paddingVertical="12dp"
-                android:textColor="?attr/colorOnSurface"
-                android:textColorHint="?attr/colorOutline"
-                android:textSize="16sp" />
+                android:layout_weight="1"
+                android:background="@drawable/bg_composer"
+                android:gravity="bottom"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/etMessage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="@string/chat_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:maxLines="4"
+                    android:minHeight="48dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="4dp"
+                    android:paddingVertical="12dp"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textColorHint="?attr/colorOutline"
+                    android:textSize="16sp" />
+
+                <ImageButton
+                    android:id="@+id/btnDictate"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/chat_dictate"
+                    android:src="@drawable/ic_mic_none"
+                    android:tooltipText="@string/chat_dictate"
+                    app:tint="?attr/colorOnSurfaceVariant" />
+            </LinearLayout>
+
+            <!-- Send when there is text, otherwise record a voice message -->
+            <ImageButton
+                android:id="@+id/btnSendMessage"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_circle_primary"
+                android:contentDescription="@string/chat_voice_record"
+                android:src="@drawable/ic_mic"
+                app:tint="?attr/colorOnPrimary" />
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/btnSendMessage"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/bg_circle_primary"
-            android:contentDescription="@string/chat_send"
-            android:src="@drawable/ic_send"
-            app:tint="?attr/colorOnPrimary" />
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/composerRecording"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/btnRecordCancel"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_circle_tonal"
+                android:contentDescription="@string/chat_voice_cancel"
+                android:src="@drawable/ic_delete"
+                app:tint="?attr/colorOnSecondaryContainer" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_composer"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp">
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/bg_record_dot" />
+
+                <TextView
+                    android:id="@+id/tvRecordTimer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="0:00"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/chat_recording"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnRecordSend"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_circle_primary"
+                android:contentDescription="@string/chat_send"
+                android:src="@drawable/ic_send"
+                app:tint="?attr/colorOnPrimary" />
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

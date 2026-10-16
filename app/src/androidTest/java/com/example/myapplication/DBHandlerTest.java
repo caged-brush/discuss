@@ -161,4 +161,75 @@ public class DBHandlerTest {
         db.leaveGroup(group, "carol");
         assertTrue(db.getGroupsForUser("carol").isEmpty());
     }
+
+    @Test
+    public void directChatIsReusedAndNamedAfterThePeer() {
+        String chat = db.getOrCreateDirectGroup("alice", "bob");
+        assertEquals(chat, db.getOrCreateDirectGroup("alice", "bob"));
+        assertEquals(chat, db.getOrCreateDirectGroup("bob", "alice"));
+        assertFalse(chat.equals(db.getOrCreateDirectGroup("alice", "carol")));
+
+        ChatGroup forAlice = db.getGroup(chat, "alice");
+        assertTrue(forAlice.isDirect());
+        assertEquals("Bob", forAlice.getName());
+        assertEquals("bob", forAlice.getPeerUid());
+        ChatGroup forBob = db.getGroup(chat, "bob");
+        assertEquals("Alice Smith", forBob.getName());
+        assertEquals("alice", forBob.getPeerUid());
+        assertEquals(2, db.getGroupsForUser("alice").size());
+    }
+
+    @Test
+    public void recommendingAnArticleCreatesAMessageInTheDirectChat() {
+        String id = firstArticleId();
+        String chat = db.getOrCreateDirectGroup("alice", "bob");
+        db.sendMessage(chat, "alice", "", id);
+
+        List<ChatMessage> messages = db.getMessages(chat, "bob");
+        assertEquals(1, messages.size());
+        assertEquals(id, messages.get(0).getArticleId());
+        assertNull(messages.get(0).getMediaType());
+    }
+
+    @Test
+    public void photoAndVoiceMessagesAreStoredAndPreviewed() {
+        String chat = db.getOrCreateDirectGroup("alice", "bob");
+        db.sendMediaMessage(chat, "alice", ChatMessage.MEDIA_IMAGE, "img_1.jpg", 0);
+        List<ChatMessage> messages = db.getMessages(chat, "bob");
+        assertEquals(ChatMessage.MEDIA_IMAGE, messages.get(0).getMediaType());
+        assertEquals("img_1.jpg", messages.get(0).getMediaPath());
+        assertTrue(db.getGroupsForUser("bob").get(0).getLastMessage().contains("Photo"));
+
+        db.sendMediaMessage(chat, "bob", ChatMessage.MEDIA_AUDIO, "voice_1.m4a", 4200);
+        messages = db.getMessages(chat, "alice");
+        assertEquals(2, messages.size());
+        assertEquals(ChatMessage.MEDIA_AUDIO, messages.get(1).getMediaType());
+        assertEquals(4200, messages.get(1).getMediaDurationMs());
+        assertTrue(db.getGroupsForUser("alice").get(0).getLastMessage().contains("Voice message"));
+    }
+
+    @Test
+    public void videosCanBeUploadedListedHiddenAndDeleted() {
+        String id = db.addVideo("alice", "My first video", "About me", "vid_1.mp4", "thumb_1.jpg", 12_000);
+        db.addVideo("bob", "Bob's video", "", "vid_2.mp4", "", 5_000);
+
+        assertEquals(2, db.getVideos("carol").size());
+        Video video = db.getVideo(id);
+        assertEquals("My first video", video.getTitle());
+        assertEquals("Alice Smith", video.getUploader().getDisplayName());
+        assertEquals(12_000, video.getDurationMs());
+        assertEquals(1, db.getVideosByUser("alice").size());
+
+        // Blocked uploaders disappear from the feed but not from their own profile
+        db.blockUser("carol", "alice");
+        assertEquals(1, db.getVideos("carol").size());
+        assertEquals(1, db.getVideosByUser("alice").size());
+
+        // Only the uploader may delete
+        assertNull(db.deleteVideo(id, "bob"));
+        assertEquals(2, db.getVideos("bob").size());
+        Video removed = db.deleteVideo(id, "alice");
+        assertEquals("vid_1.mp4", removed.getFileName());
+        assertNull(db.getVideo(id));
+    }
 }

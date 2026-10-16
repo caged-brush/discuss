@@ -39,6 +39,21 @@
         <item name="cornerSize">18dp</item>
     </style>
 
+    <!-- Rounded corners for photos inside chat bubbles -->
+    <style name="ShapeAppearanceOverlay.App.Media" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <!-- Rounded top corners for video thumbnails at the top of a card -->
+    <style name="ShapeAppearanceOverlay.App.CardTop" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">18dp</item>
+        <item name="cornerSizeTopRight">18dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
     <style name="ShapeAppearance.App.TextField" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">14dp</item>

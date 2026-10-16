@@ -76,13 +76,17 @@ public class GroupListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull GroupViewHolder holder, int position) {
             ChatGroup group = groups.get(position);
-            Ui.bindAvatar(holder.avatar, group.getId(), group.getName());
+            Ui.bindAvatar(holder.avatar,
+                    group.isDirect() && group.getPeerUid() != null ? group.getPeerUid() : group.getId(),
+                    group.getName());
             holder.name.setText(group.getName());
             holder.time.setText(Ui.shortTime(GroupListActivity.this, group.getLastActiveAt()));
             holder.lastMessage.setText(group.getLastMessage() == null
                     ? getString(R.string.groups_no_messages) : group.getLastMessage());
-            holder.members.setText(getResources().getQuantityString(R.plurals.groups_members,
-                    group.getMemberCount(), group.getMemberCount()));
+            holder.members.setText(group.isDirect()
+                    ? getString(R.string.chat_direct)
+                    : getResources().getQuantityString(R.plurals.groups_members,
+                            group.getMemberCount(), group.getMemberCount()));
             holder.itemView.setOnClickListener(v -> startActivity(
                     GroupChatActivity.intent(GroupListActivity.this, group.getId())));
         }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Folders the camera app may write into through the FileProvider -->
+<paths>
+    <files-path name="chat_media" path="chat_media/" />
+    <files-path name="videos" path="videos/" />
+</paths>

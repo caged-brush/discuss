@@ -27,6 +27,7 @@ public class ProfileActivity extends AppCompatActivity {
     private static final int MENU_CONTACT = 1;
     private static final int MENU_BLOCK = 2;
     private static final int MENU_LOGOUT = 3;
+    private static final int MENU_MESSAGE = 4;
     private static final int RECENT_ARTICLE_LIMIT = 5;
 
     private RatingBar ratingBarUser;
@@ -109,6 +110,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         loadRecentArticles();
+        loadVideos();
         refreshRating();
         refreshBlocked();
     }
@@ -139,6 +141,25 @@ public class ProfileActivity extends AppCompatActivity {
                 .setVisibility(recent.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
+    private void loadVideos() {
+        RecyclerView rv = findViewById(R.id.rvProfileVideos);
+        VideoAdapter adapter = new VideoAdapter(video ->
+                startActivity(VideoPlayerActivity.intent(this, video.getId())));
+        rv.setAdapter(adapter);
+        List<Video> videos = dbHandler.getVideosByUser(targetUid);
+        adapter.setVideos(videos);
+        findViewById(R.id.tvNoVideos).setVisibility(videos.isEmpty() ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // The player screen can delete this user's videos
+        if (dbHandler != null && target != null) {
+            loadVideos();
+        }
+    }
+
     private void showActionsMenu(View anchor) {
         PopupMenu popup = new PopupMenu(this, anchor);
         Menu menu = popup.getMenu();
@@ -147,6 +168,7 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             boolean blocked = dbHandler.isBlocked(viewerUid, targetUid);
             if (!blocked) {
+                menu.add(Menu.NONE, MENU_MESSAGE, Menu.NONE, R.string.profile_message);
                 menu.add(Menu.NONE, MENU_CONTACT, Menu.NONE,
                         dbHandler.isContact(viewerUid, targetUid)
                                 ? R.string.profile_remove_contact : R.string.profile_add_contact);
@@ -164,6 +186,10 @@ public class ProfileActivity extends AppCompatActivity {
                         Toast.makeText(this, getString(R.string.contacts_added,
                                 target.getDisplayName()), Toast.LENGTH_SHORT).show();
                     }
+                    return true;
+                case MENU_MESSAGE:
+                    startActivity(GroupChatActivity.intent(this,
+                            dbHandler.getOrCreateDirectGroup(viewerUid, targetUid)));
                     return true;
                 case MENU_BLOCK:
                     if (dbHandler.isBlocked(viewerUid, targetUid)) {
