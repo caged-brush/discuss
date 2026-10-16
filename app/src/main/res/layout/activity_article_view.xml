@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
     android:orientation="vertical"
     tools:context=".ArticleView">
 
@@ -12,11 +13,11 @@
         android:id="@+id/btnArticleBack"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_margin="4dp"
+        android:layout_margin="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/back"
-        android:src="@android:drawable/ic_menu_revert"
-        app:tint="?android:attr/textColorPrimary" />
+        android:src="@drawable/ic_arrow_back"
+        app:tint="?attr/colorOnSurface" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -28,100 +29,141 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingHorizontal="20dp"
+            android:paddingHorizontal="24dp"
             android:paddingBottom="32dp">
 
-            <TextView
-                android:id="@+id/tvArticleCategory"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAllCaps="true"
-                android:textColor="?attr/colorPrimary"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                tools:text="Economics" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvArticleTile"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_tile"
+                    android:gravity="center"
+                    android:textSize="20sp"
+                    tools:text="📈" />
+
+                <TextView
+                    android:id="@+id/tvArticleCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:letterSpacing="0.06"
+                    android:textAllCaps="true"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="Economics" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tvArticleTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="30sp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="serif"
+                android:lineSpacingMultiplier="1.08"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="32sp"
                 android:textStyle="bold"
-                tools:text="TITLE" />
+                tools:text="The Four-Day Week: Productivity or Wishful Thinking?" />
 
             <TextView
                 android:id="@+id/tvArticleByline"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="?android:attr/textColorSecondary"
+                android:layout_marginTop="12dp"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="14sp"
                 tools:text="Discuss Editorial · ★ 4.0 (3)" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="20dp"
+                android:background="?attr/colorOutlineVariant" />
 
             <TextView
                 android:id="@+id/tvArticleBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:lineSpacingMultiplier="1.3"
-                android:textColor="?android:attr/textColorPrimary"
+                android:fontFamily="serif"
+                android:lineSpacingMultiplier="1.45"
+                android:textColor="?attr/colorOnSurface"
                 android:textIsSelectable="true"
                 android:textSize="18sp"
                 tools:text="@tools:sample/lorem/random" />
 
-            <View
+            <!-- Rating -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginVertical="24dp"
-                android:background="?android:attr/listDivider" />
-
-            <TextView
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/article_rate_prompt"
-                android:textSize="20sp" />
+                android:layout_marginTop="32dp">
 
-            <RatingBar
-                android:id="@+id/ratingBarArticle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:numStars="5"
-                android:stepSize="1" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-            <TextView
-                android:id="@+id/tvYourRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:textColor="?android:attr/textColorSecondary"
-                tools:text="Your rating: 4 / 5" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/article_rate_prompt"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textStyle="bold" />
+
+                    <RatingBar
+                        android:id="@+id/ratingBarArticle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:numStars="5"
+                        android:progressBackgroundTint="?attr/colorOutlineVariant"
+                        android:progressTint="@color/star_gold"
+                        android:secondaryProgressTint="@android:color/transparent"
+                        android:stepSize="1" />
+
+                    <TextView
+                        android:id="@+id/tvYourRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        tools:text="Your rating: 4 / 5" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnShareArticle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:text="@string/article_share" />
+                    style="@style/Widget.App.Button.Tonal"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_weight="1"
+                    android:text="@string/article_share"
+                    app:icon="@drawable/ic_share" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSaveArticle"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:text="@string/article_save" />
+                    style="@style/Widget.App.Button.OutlinedIcon"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:text="@string/article_save"
+                    app:icon="@drawable/ic_bookmark_border" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

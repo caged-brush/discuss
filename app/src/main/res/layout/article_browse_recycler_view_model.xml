@@ -1,41 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="6dp"
     android:clickable="true"
-    android:focusable="true"
-    app:cardCornerRadius="12dp">
+    android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
-        <TextView
-            android:id="@+id/article_browse_recycler_category"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAllCaps="true"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="11sp"
-            android:textStyle="bold"
-            tools:text="Economics" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/article_browse_recycler_tile"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_tile"
+                android:gravity="center"
+                android:textSize="20sp"
+                tools:text="📈" />
+
+            <TextView
+                android:id="@+id/article_browse_recycler_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:letterSpacing="0.06"
+                android:textAllCaps="true"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="Economics" />
+
+            <TextView
+                android:id="@+id/article_browse_recycler_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="13sp"
+                tools:text="★ 4.2 (5)" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/article_browse_recycler_article_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:maxLines="3"
+            android:layout_marginTop="14dp"
             android:ellipsize="end"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="17sp"
+            android:fontFamily="serif"
+            android:maxLines="3"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="20sp"
             android:textStyle="bold"
-            tools:text="Article Title" />
+            tools:text="What Remote Work Did to Small-City Housing" />
 
         <TextView
             android:id="@+id/article_browse_recycler_thumbnail_text"
@@ -43,18 +69,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:ellipsize="end"
-            android:maxLines="5"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="13sp"
-            tools:text="A short preview of the article body." />
+            android:lineSpacingMultiplier="1.15"
+            android:maxLines="3"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="14sp"
+            tools:text="When offices emptied out, many workers discovered that their salary no longer had to be spent in the city that paid it." />
 
         <TextView
-            android:id="@+id/article_browse_recycler_rating"
-            android:layout_width="wrap_content"
+            android:id="@+id/article_browse_recycler_author"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginTop="12dp"
+            android:textColor="?attr/colorOutline"
             android:textSize="12sp"
-            tools:text="★ 4.2 (5)" />
+            tools:text="Discuss Editorial" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

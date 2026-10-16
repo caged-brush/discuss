@@ -2,11 +2,10 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,10 +13,11 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,14 +31,13 @@ public class CreateGroupChat extends AppCompatActivity {
     private static final String EXTRA_ARTICLE_ID = "article_id";
     private static final String STATE_MEMBERS = "members";
     private static final String STATE_ARTICLE = "article";
-    private static final int COLOR_UNSELECTED = Color.parseColor("#666666");
-    private static final int COLOR_SELECTED = Color.parseColor("#FF0000");
 
     private final Set<String> selectedMembers = new LinkedHashSet<>();
-    private final Map<String, AppCompatButton> articleButtons = new HashMap<>();
+    private final Map<String, MaterialCardView> articleCards = new HashMap<>();
     private String selectedArticleId;
     private String uid;
     private DBHandler db;
+    private TextView tvInviteCount;
 
     /** Pass an article id to pre-select it, or null. */
     public static Intent intent(Context context, String articleId) {
@@ -61,6 +60,7 @@ public class CreateGroupChat extends AppCompatActivity {
             return insets;
         });
         db = DBHandler.getInstance(this);
+        tvInviteCount = findViewById(R.id.tvInviteCount);
 
         if (savedInstanceState != null) {
             ArrayList<String> members = savedInstanceState.getStringArrayList(STATE_MEMBERS);
@@ -72,8 +72,9 @@ public class CreateGroupChat extends AppCompatActivity {
             selectedArticleId = getIntent().getStringExtra(EXTRA_ARTICLE_ID);
         }
 
-        buildContactButtons();
-        buildArticleButtons();
+        buildContactRows();
+        buildArticleRows();
+        updateInviteCount();
 
         EditText title = findViewById(R.id.edtGroupTitle);
         if (savedInstanceState == null && selectedArticleId != null) {
@@ -82,6 +83,7 @@ public class CreateGroupChat extends AppCompatActivity {
                 title.setText(article.getTitle());
             }
         }
+        findViewById(R.id.btnCreateGroupBack).setOnClickListener(v -> finish());
         findViewById(R.id.btnCreateGroup).setOnClickListener(v -> createGroup(title));
     }
 
@@ -92,7 +94,7 @@ public class CreateGroupChat extends AppCompatActivity {
         outState.putString(STATE_ARTICLE, selectedArticleId);
     }
 
-    private void buildContactButtons() {
+    private void buildContactRows() {
         LinearLayout container = findViewById(R.id.contactsContainer);
         List<UserProfile> contacts = db.getContacts(uid);
         if (contacts.isEmpty()) {
@@ -100,21 +102,28 @@ public class CreateGroupChat extends AppCompatActivity {
             return;
         }
         for (UserProfile contact : contacts) {
-            AppCompatButton button = toggleButton(contact.getDisplayName()
-                    + "  (@" + contact.getUsername() + ")");
-            setSelected(button, selectedMembers.contains(contact.getUid()));
-            button.setOnClickListener(v -> {
-                boolean nowSelected = !selectedMembers.remove(contact.getUid());
+            MaterialCardView card = inflateRow(container);
+            Ui.bindAvatar(card.findViewById(R.id.pickAvatar), contact.getUid(),
+                    contact.getDisplayName());
+            ((TextView) card.findViewById(R.id.pickTitle)).setText(contact.getDisplayName());
+            ((TextView) card.findViewById(R.id.pickSubtitle))
+                    .setText(getString(R.string.profile_username, contact.getUsername()));
+            card.setChecked(selectedMembers.contains(contact.getUid()));
+            card.setOnClickListener(v -> {
+                boolean nowSelected = !card.isChecked();
+                card.setChecked(nowSelected);
                 if (nowSelected) {
                     selectedMembers.add(contact.getUid());
+                } else {
+                    selectedMembers.remove(contact.getUid());
                 }
-                setSelected(button, nowSelected);
+                updateInviteCount();
             });
-            container.addView(button);
+            container.addView(card);
         }
     }
 
-    private void buildArticleButtons() {
+    private void buildArticleRows() {
         LinearLayout container = findViewById(R.id.articlesContainer);
         List<Article> saved = db.getSavedArticles(uid);
         if (saved.isEmpty()) {
@@ -122,46 +131,44 @@ public class CreateGroupChat extends AppCompatActivity {
             return;
         }
         for (Article article : saved) {
-            AppCompatButton button = toggleButton(article.getTitle());
-            articleButtons.put(article.getId(), button);
-            setSelected(button, article.getId().equals(selectedArticleId));
+            MaterialCardView card = inflateRow(container);
+            TextView tile = card.findViewById(R.id.pickAvatar);
+            tile.setBackgroundResource(R.drawable.bg_tile);
+            Ui.bindCategoryTile(tile, article.getCategory());
+            ((TextView) card.findViewById(R.id.pickTitle)).setText(article.getTitle());
+            ((TextView) card.findViewById(R.id.pickSubtitle)).setText(article.getCategory());
+            articleCards.put(article.getId(), card);
+            card.setChecked(article.getId().equals(selectedArticleId));
             // Single choice: tapping the chosen article again clears it
-            button.setOnClickListener(v -> {
+            card.setOnClickListener(v -> {
                 String previous = selectedArticleId;
                 selectedArticleId = article.getId().equals(previous) ? null : article.getId();
-                if (previous != null && articleButtons.containsKey(previous)) {
-                    setSelected(articleButtons.get(previous), false);
+                if (previous != null && articleCards.containsKey(previous)) {
+                    articleCards.get(previous).setChecked(false);
                 }
-                setSelected(button, selectedArticleId != null);
+                card.setChecked(selectedArticleId != null);
             });
-            container.addView(button);
+            container.addView(card);
         }
     }
 
-    private AppCompatButton toggleButton(String label) {
-        AppCompatButton button = new AppCompatButton(this);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, dp(56));
-        button.setLayoutParams(params);
-        button.setText(label);
-        button.setAllCaps(false);
-        button.setSingleLine(true);
-        button.setTextColor(Color.WHITE);
-        return button;
+    private MaterialCardView inflateRow(LinearLayout parent) {
+        return (MaterialCardView) LayoutInflater.from(this)
+                .inflate(R.layout.item_pick_row, parent, false);
     }
 
-    private void setSelected(AppCompatButton button, boolean selected) {
-        button.setBackgroundTintList(ColorStateList.valueOf(
-                selected ? COLOR_SELECTED : COLOR_UNSELECTED));
-        button.setTypeface(null, selected ? Typeface.BOLD : Typeface.NORMAL);
+    private void updateInviteCount() {
+        int count = selectedMembers.size();
+        tvInviteCount.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
+        tvInviteCount.setText(getString(R.string.create_group_selected, count));
     }
 
     private TextView emptyLabel(int textRes) {
         TextView label = new TextView(this);
         label.setText(textRes);
         label.setGravity(Gravity.CENTER);
-        label.setPadding(dp(12), dp(16), dp(12), dp(16));
-        label.setTextColor(Color.DKGRAY);
+        label.setPadding(Ui.dp(this, 12), Ui.dp(this, 16), Ui.dp(this, 12), Ui.dp(this, 16));
+        label.setTextColor(getColor(R.color.md_outline));
         return label;
     }
 
@@ -179,9 +186,5 @@ public class CreateGroupChat extends AppCompatActivity {
                 selectedArticleId);
         startActivity(GroupChatActivity.intent(this, groupId));
         finish();
-    }
-
-    private int dp(int value) {
-        return Math.round(value * getResources().getDisplayMetrics().density);
     }
 }

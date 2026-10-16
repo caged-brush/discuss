@@ -2,8 +2,6 @@ package com.example.myapplication;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
@@ -14,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
 import java.util.List;
 
 public class ContactActivity extends AppCompatActivity implements ContactAdapter.Listener {
@@ -46,7 +45,6 @@ public class ContactActivity extends AppCompatActivity implements ContactAdapter
 
         findViewById(R.id.btnContactsBack).setOnClickListener(v -> finish());
         findViewById(R.id.fabAddContact).setOnClickListener(v -> showAddContactDialog());
-        findViewById(R.id.btnTopAddContact).setOnClickListener(v -> showAddContactDialog());
     }
 
     @Override
@@ -80,19 +78,14 @@ public class ContactActivity extends AppCompatActivity implements ContactAdapter
     }
 
     private void showAddContactDialog() {
-        EditText input = new EditText(this);
-        input.setHint(R.string.contacts_add_hint);
-        input.setSingleLine(true);
-        int padding = (int) (20 * getResources().getDisplayMetrics().density);
-        FrameLayout container = new FrameLayout(this);
-        container.setPadding(padding, padding / 2, padding, 0);
-        container.addView(input);
+        View view = getLayoutInflater().inflate(R.layout.dialog_add_contact, null);
+        TextInputEditText input = view.findViewById(R.id.etContactUsername);
 
         new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.contacts_add_title)
-                .setView(container)
+                .setView(view)
                 .setPositiveButton(R.string.contacts_add, (dialog, which) ->
-                        addContactByUsername(input.getText().toString().trim()))
+                        addContactByUsername(String.valueOf(input.getText()).trim()))
                 .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss())
                 .show();
     }

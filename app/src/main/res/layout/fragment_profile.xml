@@ -1,237 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:id="@+id/main"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground">
+    android:background="?android:attr/colorBackground"
+    android:orientation="vertical"
+    tools:context=".ProfileActivity">
 
-    <!-- ============================================================== -->
-    <!--  Fixed Top Action Bar (Never scrolls off-screen)            -->
-    <!-- ============================================================== -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layoutTopBar"
+    <!-- Hero header; its top padding is set from the status bar inset in code -->
+    <LinearLayout
+        android:id="@+id/profileHero"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:paddingHorizontal="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_hero"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="28dp">
 
-        <!-- Universal Back Navigation Button -->
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/back"
-            android:src="@android:drawable/ic_menu_revert"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="?android:attr/textColorPrimary" />
-
-        <!-- Dynamic Action: Edit Profile (Self-view) or Options/Share (Peer-view) -->
-        <ImageButton
-            android:id="@+id/btnTopAction"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/profile_actions"
-            android:src="@android:drawable/ic_menu_more"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="?android:attr/textColorPrimary" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- ============================================================== -->
-    <!--    Scrollable Body Content                                     -->
-    <!-- ============================================================== -->
-    <ScrollView
-        android:id="@+id/scrollViewContent"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutTopBar">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:paddingHorizontal="8dp">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/back"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="@color/on_hero" />
+
+            <ImageButton
+                android:id="@+id/btnTopAction"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/profile_actions"
+                android:src="@drawable/ic_more_vert"
+                app:tint="@color/on_hero" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tvProfileAvatar"
+            android:layout_width="104dp"
+            android:layout_height="104dp"
+            android:background="@drawable/bg_logo_halo"
+            android:gravity="center"
+            android:textColor="@color/on_hero"
+            android:textSize="38sp"
+            android:textStyle="bold"
+            tools:text="AR" />
+
+        <TextView
+            android:id="@+id/tvUserName"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="24dp"
-            android:paddingBottom="32dp">
+            android:layout_marginTop="16dp"
+            android:fontFamily="serif"
+            android:textColor="@color/on_hero"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            tools:text="Alice Reader" />
 
-            <!-- Circular User Avatar (Golden ratio height balance) -->
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/ivUserAvatar"
-                android:layout_width="122dp"
-                android:layout_height="125dp"
-                android:layout_marginTop="24dp"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/ic_launcher"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/CircleImageViewStyle"
-                app:strokeColor="?attr/colorPrimary"
-                app:strokeWidth="2.5dp"
-                tools:srcCompat="@tools:sample/avatars" />
+        <TextView
+            android:id="@+id/tvUserHandle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/on_hero_variant"
+            android:textSize="15sp"
+            tools:text="\@alice_r" />
 
-            <!-- User RatingBar -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
             <RatingBar
                 android:id="@+id/ratingBarUser"
                 style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:isIndicator="true"
                 android:numStars="5"
+                android:progressBackgroundTint="@color/on_hero_scrim"
+                android:progressTint="@color/star_gold"
+                android:secondaryProgressTint="@android:color/transparent"
                 android:stepSize="0.1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ivUserAvatar"
                 tools:rating="4.5" />
-
-            <!-- User Name (Literary Serif Typography) -->
-            <TextView
-                android:id="@+id/tvUserName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:letterSpacing="0.02"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ratingBarUser"
-                tools:text="Alex Mercer" />
-
-            <TextView
-                android:id="@+id/tvUserHandle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textColor="?android:attr/textColorSecondary"
-                android:textSize="15sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvUserName"
-                tools:text="\@alex" />
 
             <TextView
                 android:id="@+id/tvRatingSummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textColor="?android:attr/textColorSecondary"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/on_hero_variant"
                 android:textSize="13sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvUserHandle"
                 tools:text="4.5 from 2 ratings" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scrollViewContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <TextView
                 android:id="@+id/tvBlockedBanner"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_error_banner"
                 android:gravity="center"
+                android:padding="12dp"
                 android:text="@string/profile_blocked_banner"
-                android:textColor="?attr/colorError"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvRatingSummary" />
+                android:textColor="?attr/colorOnErrorContainer"
+                android:visibility="gone" />
 
             <!-- Rate this user (hidden on your own profile) -->
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/layoutRateUser"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvBlockedBanner">
+                android:layout_marginBottom="24dp">
 
-                <TextView
-                    android:id="@+id/tvRateUserPrompt"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="16sp"
-                    tools:text="Your rating of Alex" />
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:padding="18dp">
 
-                <RatingBar
-                    android:id="@+id/ratingBarRateUser"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:numStars="5"
-                    android:stepSize="1" />
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/tvRateUserPrompt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textStyle="bold"
+                        tools:text="Your rating of Alice Reader" />
 
-            <!-- Structural Divider -->
-            <View
-                android:id="@+id/divider"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_marginTop="24dp"
-                android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layoutRateUser" />
+                    <RatingBar
+                        android:id="@+id/ratingBarRateUser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:numStars="5"
+                        android:progressBackgroundTint="?attr/colorOutlineVariant"
+                        android:progressTint="@color/star_gold"
+                        android:secondaryProgressTint="@android:color/transparent"
+                        android:stepSize="1" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            <!-- Recent Articles Label (Centered Serif Heading) -->
             <TextView
                 android:id="@+id/tvRecentArticlesLabel"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:letterSpacing="0.04"
+                android:paddingHorizontal="4dp"
                 android:text="@string/profile_recent_articles"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider" />
+                android:textAppearance="?attr/textAppearanceTitleLarge"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold" />
 
-            <!-- Recent Articles RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvRecentArticles"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvRecentArticlesLabel"
-                tools:itemCount="3"
+                tools:itemCount="2"
                 tools:listitem="@layout/article_browse_recycler_view_model" />
 
             <TextView
                 android:id="@+id/tvNoRecentArticles"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
+                android:padding="24dp"
                 android:text="@string/profile_no_articles"
-                android:textColor="?android:attr/textColorSecondary"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/rvRecentArticles" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:visibility="gone" />
+        </LinearLayout>
     </ScrollView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

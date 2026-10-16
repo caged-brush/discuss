@@ -36,7 +36,7 @@ public class AuthActivity extends AppCompatActivity {
     private View signUpFields;
     private TextInputLayout tilPassword, tilConfirmPassword;
     private EditText etUsername, etFirstName, etLastName, etEmail, etPassword, etConfirmPassword;
-    private TextView tvTitle, tvError, tvSwitch;
+    private TextView tvTitle, tvSubtitle, tvError, tvSwitch;
     private Button btnSubmit;
     private ProgressBar progress;
 
@@ -68,6 +68,7 @@ public class AuthActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         tvTitle = findViewById(R.id.tvAuthTitle);
+        tvSubtitle = findViewById(R.id.tvAuthSubtitle);
         tvError = findViewById(R.id.tvAuthError);
         tvSwitch = findViewById(R.id.tvAuthSwitch);
         btnSubmit = findViewById(R.id.btnAuthSubmit);
@@ -78,6 +79,7 @@ public class AuthActivity extends AppCompatActivity {
                 : getIntent().getBooleanExtra(EXTRA_SIGN_UP, false);
         setMode(startInSignUp);
 
+        findViewById(R.id.btnAuthBack).setOnClickListener(v -> finish());
         tvSwitch.setOnClickListener(v -> setMode(!signUpMode));
         btnSubmit.setOnClickListener(v -> submit());
     }
@@ -101,6 +103,7 @@ public class AuthActivity extends AppCompatActivity {
         tilConfirmPassword.setVisibility(visibility);
         tilPassword.setHelperText(signUp ? getString(R.string.auth_password_helper) : null);
         tvTitle.setText(signUp ? R.string.auth_signup_title : R.string.auth_login_title);
+        tvSubtitle.setText(signUp ? R.string.auth_signup_subtitle : R.string.auth_login_subtitle);
         btnSubmit.setText(signUp ? R.string.auth_signup_title : R.string.auth_login_title);
         tvSwitch.setText(signUp ? R.string.auth_switch_to_login : R.string.auth_switch_to_signup);
         showError(null);

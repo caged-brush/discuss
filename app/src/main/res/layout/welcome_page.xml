@@ -1,69 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_welcome"
+    android:orientation="vertical"
     tools:context=".WelcomePage">
 
-    <Button
-        android:id="@+id/WelcomePage_SignUp"
-        android:layout_width="294dp"
-        android:layout_height="76dp"
-        android:layout_marginStart="58dp"
-        android:layout_marginEnd="59dp"
-        android:layout_marginBottom="40dp"
-        android:text="@string/WelcomePage_SignUp"
-        android:textSize="@dimen/WelcomePage_ButtonTextSize"
-        android:textColor="@color/black"
-        android:backgroundTint="@color/light_gray"
-        app:layout_constraintBottom_toTopOf="@+id/WelcomePage_forgotCreds"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:elevation="200dp"/>
-
-    <TextView
-        android:id="@+id/WelcomePage_forgotCreds"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:padding="8dp"
-        android:layout_marginBottom="88dp"
-        android:text="@string/WelcomePage_ForgotCreds"
-        android:textColor="?attr/colorPrimary"
-        android:textSize="16sp"
+    <!-- Brand area; its paddings are set from the window insets in code -->
+    <LinearLayout
+        android:id="@+id/welcomeHero"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/WelcomePage_Logo"
-        android:layout_width="220dp"
-        android:layout_height="266dp"
-        android:layout_marginStart="96dp"
-        android:layout_marginTop="66dp"
-        android:layout_marginEnd="96dp"
-        android:src="@drawable/temp_logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/WelcomePage_Logo"
+            android:layout_width="132dp"
+            android:layout_height="132dp"
+            android:background="@drawable/bg_logo_halo"
+            android:contentDescription="@string/app_name"
+            android:padding="14dp"
+            android:src="@drawable/ic_logo_mark" />
 
-    <Button
-        android:id="@+id/WelcomePage_Login"
-        android:layout_width="294dp"
-        android:layout_height="76dp"
-        android:layout_marginStart="59dp"
-        android:layout_marginEnd="59dp"
-        android:layout_marginBottom="21dp"
-        android:backgroundTint="@color/light_gray"
-        android:elevation="@dimen/cardview_default_radius"
-        android:text="@string/WelcomePage_Login"
-        android:textColor="@color/black"
-        android:textSize="@dimen/WelcomePage_ButtonTextSize"
-        app:layout_constraintBottom_toTopOf="@+id/WelcomePage_SignUp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="serif"
+            android:text="@string/app_name"
+            android:textColor="@color/on_hero"
+            android:textSize="44sp"
+            android:textStyle="bold" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/welcome_tagline"
+            android:textColor="@color/on_hero_variant"
+            android:textSize="17sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/welcomeSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_sheet"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/WelcomePage_Login"
+            style="@style/Widget.App.Button"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/WelcomePage_Login" />
+
+        <Button
+            android:id="@+id/WelcomePage_SignUp"
+            style="@style/Widget.App.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/WelcomePage_SignUp" />
+
+        <Button
+            android:id="@+id/WelcomePage_forgotCreds"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            android:text="@string/WelcomePage_ForgotCreds" />
+    </LinearLayout>
+</LinearLayout>

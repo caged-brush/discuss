@@ -2,7 +2,7 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,11 +18,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.color.MaterialColors;
+import com.google.android.material.shape.ShapeAppearanceModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
@@ -30,8 +33,6 @@ import java.util.List;
 
 public class GroupChatActivity extends AppCompatActivity {
     private static final String EXTRA_GROUP_ID = "group_id";
-    private static final int COLOR_OWN_BUBBLE = Color.parseColor("#A9C7E0");
-    private static final int COLOR_OTHER_BUBBLE = Color.parseColor("#C9D3DC");
 
     private DBHandler db;
     private String uid;
@@ -39,6 +40,7 @@ public class GroupChatActivity extends AppCompatActivity {
     private ChatGroup group;
     private RecyclerView rvMessages;
     private MessageAdapter adapter;
+    private TextView tvSubtitle;
 
     public static Intent intent(Context context, String groupId) {
         return new Intent(context, GroupChatActivity.class).putExtra(EXTRA_GROUP_ID, groupId);
@@ -70,9 +72,12 @@ public class GroupChatActivity extends AppCompatActivity {
             return insets;
         });
 
-        TextView title = findViewById(R.id.tvChatTitle);
-        title.setText(group.getName());
-        title.setOnClickListener(v -> showGroupOptions());
+        ((TextView) findViewById(R.id.tvChatTitle)).setText(group.getName());
+        Ui.bindAvatar(findViewById(R.id.tvChatAvatar), group.getId(), group.getName());
+        tvSubtitle = findViewById(R.id.tvChatSubtitle);
+        findViewById(R.id.btnChatBack).setOnClickListener(v -> finish());
+        findViewById(R.id.chatHeader).setOnClickListener(v -> showGroupOptions());
+        findViewById(R.id.btnChatMore).setOnClickListener(v -> showGroupOptions());
 
         rvMessages = findViewById(R.id.rvChatMessages);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -102,6 +107,9 @@ public class GroupChatActivity extends AppCompatActivity {
     }
 
     private void loadMessages() {
+        int members = db.getGroupMembers(groupId).size();
+        tvSubtitle.setText(getResources().getQuantityString(R.plurals.groups_members,
+                members, members));
         adapter.setMessages(db.getMessages(groupId, uid));
         if (adapter.getItemCount() > 0) {
             rvMessages.scrollToPosition(adapter.getItemCount() - 1);
@@ -192,29 +200,63 @@ public class GroupChatActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
             ChatMessage message = messages.get(position);
             boolean mine = message.getSender().getUid().equals(uid);
+            View bubble = holder.bubble;
 
-            // Own messages sit on the right without avatar or name
+            // Own messages sit on the right in the brand colour, without avatar or name
+            int background = MaterialColors.getColor(bubble, mine
+                    ? androidx.appcompat.R.attr.colorPrimary
+                    : com.google.android.material.R.attr.colorSurfaceContainerHigh);
+            int foreground = MaterialColors.getColor(bubble, mine
+                    ? com.google.android.material.R.attr.colorOnPrimary
+                    : com.google.android.material.R.attr.colorOnSurface);
+            int accent = mine ? foreground : MaterialColors.getColor(bubble,
+                    androidx.appcompat.R.attr.colorPrimary);
             holder.row.setGravity(mine ? Gravity.END : Gravity.START);
+            holder.bubble.setCardBackgroundColor(background);
+
+            float big = Ui.dp(GroupChatActivity.this, 18);
+            float small = Ui.dp(GroupChatActivity.this, 5);
+            ShapeAppearanceModel.Builder shape = holder.bubble.getShapeAppearanceModel()
+                    .toBuilder().setAllCornerSizes(big);
+            if (mine) {
+                shape.setBottomRightCornerSize(small);
+            } else {
+                shape.setBottomLeftCornerSize(small);
+            }
+            holder.bubble.setShapeAppearanceModel(shape.build());
+
             holder.avatar.setVisibility(mine ? View.GONE : View.VISIBLE);
             holder.sender.setVisibility(mine ? View.GONE : View.VISIBLE);
-            holder.sender.setText(message.getSender().getDisplayName());
-            holder.bubble.setCardBackgroundColor(mine ? COLOR_OWN_BUBBLE : COLOR_OTHER_BUBBLE);
-            holder.avatar.setOnClickListener(v -> startActivity(ProfileActivity.intent(
-                    GroupChatActivity.this, message.getSender().getUid())));
+            if (!mine) {
+                Ui.bindAvatar(holder.avatar, message.getSender().getUid(),
+                        message.getSender().getDisplayName());
+                holder.avatar.setOnClickListener(v -> startActivity(ProfileActivity.intent(
+                        GroupChatActivity.this, message.getSender().getUid())));
+                holder.sender.setText(message.getSender().getDisplayName());
+                holder.sender.setTextColor(accent);
+            }
 
-            StringBuilder text = new StringBuilder(message.getBody());
-            if (message.getArticleId() != null) {
-                if (text.length() > 0) {
-                    text.append("\n\n");
-                }
-                text.append(getString(R.string.chat_shared_article, message.getArticleTitle()));
-                holder.bubble.setOnClickListener(v -> startActivity(
+            boolean hasText = !message.getBody().isEmpty();
+            holder.body.setVisibility(hasText ? View.VISIBLE : View.GONE);
+            holder.body.setText(message.getBody());
+            holder.body.setTextColor(foreground);
+
+            boolean hasArticle = message.getArticleId() != null;
+            holder.articleBlock.setVisibility(hasArticle ? View.VISIBLE : View.GONE);
+            if (hasArticle) {
+                holder.articleTitle.setText(message.getArticleTitle());
+                holder.articleTitle.setTextColor(foreground);
+                holder.articleCta.setTextColor(accent);
+                holder.articleTile.setBackgroundTintList(ColorStateList.valueOf(
+                        ColorUtils.setAlphaComponent(foreground, 0x26)));
+                holder.articleBlock.setOnClickListener(v -> startActivity(
                         ArticleView.intent(GroupChatActivity.this, message.getArticleId())));
             } else {
-                holder.bubble.setOnClickListener(null);
-                holder.bubble.setClickable(false);
+                holder.articleBlock.setOnClickListener(null);
             }
-            holder.body.setText(text);
+
+            holder.time.setText(Ui.timeOfDay(GroupChatActivity.this, message.getSentAt()));
+            holder.time.setTextColor(ColorUtils.setAlphaComponent(foreground, 0xB3));
         }
 
         @Override
@@ -223,9 +265,9 @@ public class GroupChatActivity extends AppCompatActivity {
         }
 
         class MessageViewHolder extends RecyclerView.ViewHolder {
-            final LinearLayout row;
-            final MaterialCardView avatar, bubble;
-            final TextView sender, body;
+            final LinearLayout row, articleBlock;
+            final MaterialCardView bubble;
+            final TextView avatar, sender, body, time, articleTile, articleTitle, articleCta;
 
             MessageViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -234,6 +276,11 @@ public class GroupChatActivity extends AppCompatActivity {
                 bubble = itemView.findViewById(R.id.messageBubble);
                 sender = itemView.findViewById(R.id.tvSender);
                 body = itemView.findViewById(R.id.tvMessage);
+                time = itemView.findViewById(R.id.tvMessageTime);
+                articleBlock = itemView.findViewById(R.id.articleBlock);
+                articleTile = itemView.findViewById(R.id.tvArticleTile);
+                articleTitle = itemView.findViewById(R.id.tvSharedArticleTitle);
+                articleCta = itemView.findViewById(R.id.tvSharedArticleCta);
             }
         }
     }

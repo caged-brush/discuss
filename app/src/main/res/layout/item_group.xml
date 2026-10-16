@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:gravity="center_vertical"
+    android:minHeight="76dp"
     android:orientation="horizontal"
-    android:paddingHorizontal="16dp"
+    android:paddingHorizontal="20dp"
     android:paddingVertical="12dp">
 
-    <!-- Round group icon -->
-    <ImageView
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/temp_icon"
-        android:importantForAccessibility="no"
-        android:padding="12dp"
-        android:src="@drawable/ic_nav_chat"
-        app:tint="@color/white" />
+    <TextView
+        android:id="@+id/tvGroupAvatar"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:background="@drawable/bg_avatar"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="AT" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -33,10 +34,10 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="16sp"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold"
-            tools:text="Book club" />
+            tools:text="AI Tutors Arrive in the Classroom" />
 
         <TextView
             android:id="@+id/tvGroupLastMessage"
@@ -45,17 +46,33 @@
             android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="13sp"
-            tools:text="See you there!" />
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="14sp"
+            tools:text="Interesting read, what do you think?" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvGroupMembers"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:textColor="?android:attr/textColorSecondary"
-        android:textSize="12sp"
-        tools:text="3 members" />
+        android:layout_marginStart="12dp"
+        android:gravity="end"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvGroupTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="12sp"
+            tools:text="4:12 PM" />
+
+        <TextView
+            android:id="@+id/tvGroupMembers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="?attr/colorOutline"
+            android:textSize="12sp"
+            tools:text="2 members" />
+    </LinearLayout>
 </LinearLayout>

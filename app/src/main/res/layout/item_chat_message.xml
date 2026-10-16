@@ -1,66 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/messageRow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:gravity="start|top"
-    android:paddingTop="6dp"
-    android:paddingBottom="6dp">
+    android:orientation="horizontal"
+    android:paddingVertical="3dp">
 
-    <!-- Avatar placeholder -->
-    <com.google.android.material.card.MaterialCardView
+    <!-- Sender initials; hidden on your own messages -->
+    <TextView
         android:id="@+id/messageAvatar"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginEnd="8dp"
-        app:cardBackgroundColor="#C9D3DC"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="0dp"
-        app:strokeWidth="0dp" />
+        android:background="@drawable/bg_avatar"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        tools:text="B" />
 
-    <!-- Message bubble -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/messageBubble"
+        style="@style/Widget.App.Card.Bubble"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="#C9D3DC"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="0dp"
-        app:strokeWidth="0dp">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:gravity="center_vertical"
             android:orientation="vertical"
             android:paddingHorizontal="14dp"
-            android:paddingVertical="10dp">
+            android:paddingVertical="9dp">
 
             <!-- Hidden on your own messages -->
             <TextView
                 android:id="@+id/tvSender"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#455A64"
+                android:layout_marginBottom="2dp"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                tools:text="Alex" />
+                tools:text="Bob" />
+
+            <!-- Shared article card -->
+            <LinearLayout
+                android:id="@+id/articleBlock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:id="@+id/tvArticleTile"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_tile"
+                    android:gravity="center"
+                    android:text="📄"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvSharedArticleTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="serif"
+                        android:maxLines="2"
+                        android:maxWidth="200dp"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        tools:text="AI Tutors Arrive in the Classroom" />
+
+                    <TextView
+                        android:id="@+id/tvSharedArticleCta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chat_article_cta"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tvMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxWidth="240dp"
-                android:textColor="#222222"
+                android:maxWidth="250dp"
                 android:textSize="15sp"
-                tools:text="Contact's message" />
+                tools:text="Interesting read, what do you think?" />
+
+            <TextView
+                android:id="@+id/tvMessageTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="2dp"
+                android:textSize="11sp"
+                tools:text="4:12 PM" />
         </LinearLayout>
-
     </com.google.android.material.card.MaterialCardView>
-
 </LinearLayout>

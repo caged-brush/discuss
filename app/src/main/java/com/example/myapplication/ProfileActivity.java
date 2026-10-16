@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
+import androidx.activity.SystemBarStyle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -58,11 +60,17 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
-        EdgeToEdge.enable(this);
+        // The header is a dark gradient, so the status bar icons stay light
+        EdgeToEdge.enable(this,
+                SystemBarStyle.dark(Color.TRANSPARENT),
+                SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT));
         setContentView(R.layout.fragment_profile);
+        View hero = findViewById(R.id.profileHero);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            // The gradient extends behind the status bar; the rest respects the other insets
+            v.setPadding(bars.left, 0, bars.right, bars.bottom);
+            hero.setPadding(0, bars.top, 0, hero.getPaddingBottom());
             return insets;
         });
 
@@ -75,6 +83,7 @@ public class ProfileActivity extends AppCompatActivity {
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         btnTopAction.setOnClickListener(this::showActionsMenu);
 
+        ((TextView) findViewById(R.id.tvProfileAvatar)).setText(Ui.initials(target.getDisplayName()));
         ((TextView) findViewById(R.id.tvUserName)).setText(target.getDisplayName());
         ((TextView) findViewById(R.id.tvUserHandle))
                 .setText(getString(R.string.profile_username, target.getUsername()));
@@ -110,7 +119,8 @@ public class ProfileActivity extends AppCompatActivity {
         ratingBarUser.setRating((float) avgRating);
         tvRatingSummary.setText(count == 0
                 ? getString(R.string.rating_none)
-                : getResources().getQuantityString(R.plurals.profile_rating_summary, count, avgRating, count));
+                : getResources().getQuantityString(R.plurals.profile_rating_summary,
+                        count, avgRating, count));
     }
 
     private void refreshBlocked() {

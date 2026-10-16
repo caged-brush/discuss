@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
     android:fillViewport="true"
     tools:context=".AuthActivity">
 
@@ -12,27 +13,47 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="32dp"
-        android:paddingVertical="24dp">
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="24dp">
+
+        <ImageButton
+            android:id="@+id/btnAuthBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="-12dp"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="?attr/colorOnSurface" />
 
         <ImageView
-            android:layout_width="120dp"
-            android:layout_height="140dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/temp_logo" />
+            android:src="@drawable/ic_logo" />
 
         <TextView
             android:id="@+id/tvAuthTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="16dp"
-            android:gravity="center"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="28sp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="serif"
+            android:textAppearance="?attr/textAppearanceHeadlineLarge"
+            android:textColor="?attr/colorOnSurface"
             android:textStyle="bold"
-            tools:text="Log in" />
+            tools:text="Create account" />
+
+        <TextView
+            android:id="@+id/tvAuthSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="24dp"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            tools:text="Join to rate articles and start group chats." />
 
         <!-- Sign-up only fields -->
         <LinearLayout
@@ -43,11 +64,12 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilUsername"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                style="@style/Widget.App.TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/auth_username"
-                app:helperText="@string/auth_username_helper">
+                app:helperText="@string/auth_username_helper"
+                app:prefixText="\@">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etUsername"
@@ -64,7 +86,7 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.App.TextInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
@@ -79,7 +101,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.App.TextInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
@@ -96,7 +118,7 @@
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.App.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -111,7 +133,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilPassword"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.App.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -128,7 +150,7 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilConfirmPassword"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.App.TextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -148,16 +170,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:textColor="?attr/colorError"
+            android:background="@drawable/bg_error_banner"
+            android:padding="12dp"
+            android:textColor="?attr/colorOnErrorContainer"
             android:visibility="gone" />
 
         <Button
             android:id="@+id/btnAuthSubmit"
+            style="@style/Widget.App.Button"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="16dp"
-            android:textSize="18sp"
-            tools:text="Log in" />
+            android:layout_height="56dp"
+            android:layout_marginTop="20dp"
+            tools:text="Create account" />
 
         <ProgressBar
             android:id="@+id/progressAuth"
@@ -167,14 +191,13 @@
             android:layout_marginTop="12dp"
             android:visibility="gone" />
 
-        <TextView
+        <Button
             android:id="@+id/tvAuthSwitch"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="15sp"
-            tools:text="No account yet? Sign up" />
+            tools:text="Already have an account? Log in" />
     </LinearLayout>
 </ScrollView>

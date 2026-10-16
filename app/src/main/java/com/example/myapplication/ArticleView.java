@@ -3,7 +3,7 @@ package com.example.myapplication;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,7 +14,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import android.text.TextUtils;
 
 import java.util.List;
 
@@ -26,7 +29,7 @@ public class ArticleView extends AppCompatActivity {
     private String articleId;
     private TextView tvByline, tvYourRating;
     private RatingBar ratingBar;
-    private Button btnSave;
+    private MaterialButton btnSave;
 
     public static Intent intent(Context context, String articleId) {
         return new Intent(context, ArticleView.class).putExtra(EXTRA_ARTICLE_ID, articleId);
@@ -56,7 +59,10 @@ public class ArticleView extends AppCompatActivity {
             return insets;
         });
 
-        ((TextView) findViewById(R.id.tvArticleCategory)).setText(article.getCategory());
+        TextView tvCategory = findViewById(R.id.tvArticleCategory);
+        tvCategory.setText(article.getCategory());
+        tvCategory.setTextColor(Ui.categoryTextColor(this, article.getCategory()));
+        Ui.bindCategoryTile(findViewById(R.id.tvArticleTile), article.getCategory());
         ((TextView) findViewById(R.id.tvArticleTitle)).setText(article.getTitle());
         ((TextView) findViewById(R.id.tvArticleBody)).setText(article.getBody());
         tvByline = findViewById(R.id.tvArticleByline);
@@ -89,9 +95,9 @@ public class ArticleView extends AppCompatActivity {
 
     private void refreshRating() {
         Article article = db.getArticle(articleId);
-        tvByline.setText(getString(R.string.article_byline, article.getAuthor(),
-                ArticleBrowseRecyclerAdapter.formatRating(tvByline, article)));
+        tvByline.setText(TextUtils.concat(article.getAuthor(), "  ·  ", Ui.rating(this, article)));
         int mine = db.getArticleRating(uid, articleId);
+        tvYourRating.setVisibility(mine == 0 ? View.GONE : View.VISIBLE);
         tvYourRating.setText(mine == 0 ? "" : getString(R.string.article_your_rating, mine));
     }
 
@@ -106,8 +112,9 @@ public class ArticleView extends AppCompatActivity {
     }
 
     private void refreshSaved() {
-        btnSave.setText(db.isArticleSaved(uid, articleId)
-                ? R.string.article_unsave : R.string.article_save);
+        boolean saved = db.isArticleSaved(uid, articleId);
+        btnSave.setText(saved ? R.string.article_unsave : R.string.article_save);
+        btnSave.setIconResource(saved ? R.drawable.ic_bookmark : R.drawable.ic_bookmark_border);
     }
 
     /** Lets the user post the article into one of their groups, or start a new group. */
@@ -119,7 +126,7 @@ public class ArticleView extends AppCompatActivity {
             labels[i + 1] = groups.get(i).getName();
         }
         new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.article_share)
+                .setTitle(R.string.article_share_title)
                 .setItems(labels, (dialog, which) -> {
                     if (which == 0) {
                         // Sharing requires the article to be in the library of the creator

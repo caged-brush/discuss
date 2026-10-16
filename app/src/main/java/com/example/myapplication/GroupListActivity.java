@@ -76,7 +76,9 @@ public class GroupListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull GroupViewHolder holder, int position) {
             ChatGroup group = groups.get(position);
+            Ui.bindAvatar(holder.avatar, group.getId(), group.getName());
             holder.name.setText(group.getName());
+            holder.time.setText(Ui.shortTime(GroupListActivity.this, group.getLastActiveAt()));
             holder.lastMessage.setText(group.getLastMessage() == null
                     ? getString(R.string.groups_no_messages) : group.getLastMessage());
             holder.members.setText(getResources().getQuantityString(R.plurals.groups_members,
@@ -91,10 +93,12 @@ public class GroupListActivity extends AppCompatActivity {
         }
 
         class GroupViewHolder extends RecyclerView.ViewHolder {
-            final TextView name, lastMessage, members;
+            final TextView avatar, name, lastMessage, members, time;
 
             GroupViewHolder(@NonNull View itemView) {
                 super(itemView);
+                avatar = itemView.findViewById(R.id.tvGroupAvatar);
+                time = itemView.findViewById(R.id.tvGroupTime);
                 name = itemView.findViewById(R.id.tvGroupName);
                 lastMessage = itemView.findViewById(R.id.tvGroupLastMessage);
                 members = itemView.findViewById(R.id.tvGroupMembers);

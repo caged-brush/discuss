@@ -2,9 +2,9 @@
     <string name="app_name">Discuss</string>
 
     <!-- Welcome page -->
-    <string name="WelcomePage_ForgotCreds">Forgot your username\nor password?</string>
-    <string name="WelcomePage_Login"><b>Login</b></string>
-    <string name="WelcomePage_SignUp"><b>Sign Up</b></string>
+    <string name="WelcomePage_ForgotCreds">Forgot your username or password?</string>
+    <string name="WelcomePage_Login">Log in</string>
+    <string name="WelcomePage_SignUp">Create account</string>
     <string name="forgot_title">Account recovery</string>
     <string name="forgot_message">Discuss accounts are stored only on this device, so there is no email reset. Your username is shown on your profile once you log in. If you have lost your password, create a new account.</string>
 
@@ -42,24 +42,24 @@
     <string name="article_byline">%1$s · %2$s</string>
     <string name="article_rate_prompt">Rate this article</string>
     <string name="article_your_rating">Your rating: %1$d / 5</string>
-    <string name="article_save">Save to Library</string>
-    <string name="article_unsave">Remove from Library</string>
+    <string name="article_save">Save</string>
+    <string name="article_unsave">Saved</string>
     <string name="article_saved_toast">Saved to your library</string>
-    <string name="article_share">Share to group</string>
+    <string name="article_share">Share</string>
     <string name="article_share_new_group">+ New group chat</string>
     <string name="article_shared_toast">Shared to %1$s</string>
     <string name="article_not_found">This article is no longer available.</string>
 
     <!-- Contacts -->
     <string name="contacts_add_title">Add contact</string>
-    <string name="contacts_add_hint">Their username</string>
+    <string name="contacts_add_hint">Username</string>
     <string name="contacts_add">Add</string>
     <string name="contacts_not_found">No user called \"%1$s\".</string>
     <string name="contacts_self">You cannot add yourself.</string>
     <string name="contacts_blocked">Unblock this user first.</string>
     <string name="contacts_exists">Already in your contacts.</string>
     <string name="contacts_added">Added %1$s</string>
-    <string name="contacts_empty">No contacts yet. Tap + and enter a friend\'s username.</string>
+    <string name="contacts_empty">No contacts yet.\nTap “Add contact” and enter a friend\'s username.</string>
     <string name="contacts_remove_title">Remove contact</string>
     <string name="contacts_remove_message">Remove %1$s from your contacts?</string>
 
@@ -78,9 +78,9 @@
 
     <!-- Groups -->
     <string name="groups_title">Group chats</string>
-    <string name="groups_empty">No group chats yet. Tap + to start one.</string>
+    <string name="groups_empty">No group chats yet.\nStart one around an article you liked.</string>
     <string name="groups_no_messages">No messages yet</string>
-    <string name="create_group_title_hint">Add Group Chat Title</string>
+    <string name="create_group_title_hint">Group name</string>
     <string name="create_group_contacts">Contacts</string>
     <string name="create_group_article">Attach a saved article (optional)</string>
     <string name="create_group_no_contacts">Add contacts first to invite them.</string>
@@ -107,4 +107,13 @@
         <item quantity="one">%1$d member</item>
         <item quantity="other">%1$d members</item>
     </plurals>
+    <string name="welcome_tagline">Read. Rate. Talk it through.</string>
+    <string name="auth_login_subtitle">Log in to keep reading and chatting.</string>
+    <string name="auth_signup_subtitle">Join to rate articles and start group chats.</string>
+    <string name="browse_subtitle">Fresh reads, rated by people like you</string>
+    <string name="article_share_title">Share to group</string>
+    <string name="create_group_screen_title">New group chat</string>
+    <string name="create_group_invite">Invite contacts</string>
+    <string name="create_group_selected">%1$d selected</string>
+    <string name="chat_article_cta">Read article</string>
 </resources>

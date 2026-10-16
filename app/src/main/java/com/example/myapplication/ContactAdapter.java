@@ -8,7 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.imageview.ShapeableImageView;
 import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
@@ -40,6 +39,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
         UserProfile currentItem = contactList.get(position);
 
+        Ui.bindAvatar(holder.tvAvatar, currentItem.getUid(), currentItem.getDisplayName());
         holder.tvName.setText(currentItem.getDisplayName());
         holder.tvInfo.setText(holder.itemView.getContext()
                 .getString(R.string.profile_username, currentItem.getUsername()));
@@ -70,14 +70,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     }
 
     public static class ContactViewHolder extends RecyclerView.ViewHolder {
-        ShapeableImageView ivAvatar;
+        TextView tvAvatar;
         TextView tvName;
         TextView tvInfo;
         ImageButton btnRemove;
 
         public ContactViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivAvatar = itemView.findViewById(R.id.ivContactAvatar);
+            tvAvatar = itemView.findViewById(R.id.tvContactAvatar);
             tvName = itemView.findViewById(R.id.tvContactName);
             tvInfo = itemView.findViewById(R.id.tvContactInfo);
             btnRemove = itemView.findViewById(R.id.btnRemoveContact);

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material 3 colour roles, dark -->
+    <color name="md_primary">#FFC0C1FF</color>
+    <color name="md_on_primary">#FF1F1B8C</color>
+    <color name="md_primary_container">#FF3433A9</color>
+    <color name="md_on_primary_container">#FFE3E1FF</color>
+    <color name="md_secondary">#FFC3C4DD</color>
+    <color name="md_on_secondary">#FF2C2F42</color>
+    <color name="md_secondary_container">#FF424559</color>
+    <color name="md_on_secondary_container">#FFE0E1F9</color>
+    <color name="md_background">#FF121218</color>
+    <color name="md_on_background">#FFE4E1EA</color>
+    <color name="md_surface">#FF121218</color>
+    <color name="md_on_surface">#FFE4E1EA</color>
+    <color name="md_surface_variant">#FF46464F</color>
+    <color name="md_on_surface_variant">#FFC8C5D0</color>
+    <color name="md_surface_container_lowest">#FF1B1B23</color>
+    <color name="md_surface_container_low">#FF1A1A21</color>
+    <color name="md_surface_container">#FF1E1E25</color>
+    <color name="md_surface_container_high">#FF292930</color>
+    <color name="md_surface_container_highest">#FF34343B</color>
+    <color name="md_outline">#FF918F9A</color>
+    <color name="md_outline_variant">#FF46464F</color>
+    <color name="md_error">#FFFFB4AB</color>
+    <color name="md_on_error">#FF690005</color>
+    <color name="md_error_container">#FF93000A</color>
+    <color name="md_on_error_container">#FFFFDAD6</color>
+</resources>

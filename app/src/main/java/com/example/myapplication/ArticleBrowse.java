@@ -2,18 +2,18 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
@@ -25,14 +25,15 @@ public class ArticleBrowse extends AppCompatActivity {
     private static final String FILTER_ALL = "__all__";
     private static final String FILTER_SAVED = "__saved__";
     private static final String STATE_FILTER = "filter";
-    private static final String STATE_BAR = "bar_expanded";
+    private static final String STATE_RAIL = "rail_expanded";
 
-    private Boolean isCBexpanded = true;
     private String filter = FILTER_ALL;
     private String uid;
     private DBHandler db;
     private ArticleBrowseRecyclerAdapter adapter;
     private TextView emptyView;
+    private ViewGroup rail;
+    private View navItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,18 +47,18 @@ public class ArticleBrowse extends AppCompatActivity {
         db = DBHandler.getInstance(this);
 
         RecyclerView recycler = findViewById(R.id.article_browse_recycler);
-        FrameLayout contactBar = findViewById(R.id.article_browse_contactBar);
-        AppCompatImageButton contactButton = findViewById(R.id.article_browse_contact_button);
+        rail = findViewById(R.id.browseRail);
+        navItems = findViewById(R.id.navItems);
         emptyView = findViewById(R.id.article_browse_empty);
+        emptyView.setText(R.string.browse_empty_saved);
 
         if (savedInstanceState != null) {
             filter = savedInstanceState.getString(STATE_FILTER, FILTER_ALL);
-            if (!savedInstanceState.getBoolean(STATE_BAR, true)) {
-                isCBexpanded = changeContactBar(true, contactBar);
-            }
+            setRailExpanded(savedInstanceState.getBoolean(STATE_RAIL, true), false);
         }
 
-        contactButton.setOnClickListener(v -> isCBexpanded = changeContactBar(isCBexpanded, contactBar));
+        findViewById(R.id.article_browse_contact_button).setOnClickListener(v ->
+                setRailExpanded(navItems.getVisibility() != View.VISIBLE, true));
         findViewById(R.id.nav_contacts).setOnClickListener(v ->
                 startActivity(new Intent(this, ContactActivity.class)));
         findViewById(R.id.nav_groups).setOnClickListener(v ->
@@ -68,7 +69,7 @@ public class ArticleBrowse extends AppCompatActivity {
         adapter = new ArticleBrowseRecyclerAdapter(article ->
                 startActivity(ArticleView.intent(this, article.getId())));
         recycler.setAdapter(adapter);
-        recycler.setLayoutManager(new GridLayoutManager(this, 2));
+        recycler.setLayoutManager(new LinearLayoutManager(this));
 
         buildCategoryChips();
 
@@ -92,7 +93,15 @@ public class ArticleBrowse extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_FILTER, filter);
-        outState.putBoolean(STATE_BAR, isCBexpanded);
+        outState.putBoolean(STATE_RAIL, navItems.getVisibility() == View.VISIBLE);
+    }
+
+    /** Shows or hides the icon group; the toggle button itself always stays in place. */
+    private void setRailExpanded(boolean expanded, boolean animate) {
+        if (animate) {
+            TransitionManager.beginDelayedTransition(rail, new AutoTransition().setDuration(180));
+        }
+        navItems.setVisibility(expanded ? View.VISIBLE : View.GONE);
     }
 
     private void buildCategoryChips() {
@@ -132,16 +141,6 @@ public class ArticleBrowse extends AppCompatActivity {
             articles = db.getArticles(FILTER_ALL.equals(filter) ? null : filter);
         }
         adapter.setArticles(articles);
-        boolean empty = articles.isEmpty();
-        emptyView.setText(R.string.browse_empty_saved);
-        emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
-    }
-
-    public Boolean changeContactBar(Boolean isCBexpanded, FrameLayout contactBar) {
-        ViewGroup.LayoutParams params = contactBar.getLayoutParams();
-        params.width = (int) getResources().getDimension(isCBexpanded
-                ? R.dimen.ArticleBrowseCollapsedCB : R.dimen.ArticleBrowseExpandedCB);
-        contactBar.setLayoutParams(params);
-        return !isCBexpanded;
+        emptyView.setVisibility(articles.isEmpty() ? View.VISIBLE : View.GONE);
     }
 }

@@ -3,4 +3,39 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="light_gray">#B8B8B8</color>
+
+    <!-- Brand -->
+    <color name="star_gold">#FFF59E0B</color>
+    <color name="hero_start">#FF3730A3</color>
+    <color name="hero_end">#FF6D28D9</color>
+    <color name="on_hero">#FFFFFFFF</color>
+    <color name="on_hero_variant">#CCFFFFFF</color>
+    <color name="on_hero_scrim">#33FFFFFF</color>
+
+    <!-- Material 3 colour roles, light -->
+    <color name="md_primary">#FF4338CA</color>
+    <color name="md_on_primary">#FFFFFFFF</color>
+    <color name="md_primary_container">#FFE3E1FF</color>
+    <color name="md_on_primary_container">#FF14115C</color>
+    <color name="md_secondary">#FF5A5D7A</color>
+    <color name="md_on_secondary">#FFFFFFFF</color>
+    <color name="md_secondary_container">#FFE2E3F4</color>
+    <color name="md_on_secondary_container">#FF181B33</color>
+    <color name="md_background">#FFFAF9FF</color>
+    <color name="md_on_background">#FF1B1B23</color>
+    <color name="md_surface">#FFFAF9FF</color>
+    <color name="md_on_surface">#FF1B1B23</color>
+    <color name="md_surface_variant">#FFE5E1EC</color>
+    <color name="md_on_surface_variant">#FF46464F</color>
+    <color name="md_surface_container_lowest">#FFFFFFFF</color>
+    <color name="md_surface_container_low">#FFF4F3FB</color>
+    <color name="md_surface_container">#FFEFEEF7</color>
+    <color name="md_surface_container_high">#FFE9E8F1</color>
+    <color name="md_surface_container_highest">#FFE3E2EB</color>
+    <color name="md_outline">#FF777680</color>
+    <color name="md_outline_variant">#FFC7C5D0</color>
+    <color name="md_error">#FFBA1A1A</color>
+    <color name="md_on_error">#FFFFFFFF</color>
+    <color name="md_error_container">#FFFFDAD6</color>
+    <color name="md_on_error_container">#FF410002</color>
 </resources>
