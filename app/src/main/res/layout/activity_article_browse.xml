@@ -25,7 +25,7 @@
         <FrameLayout
             android:id="@+id/article_browse_contactBar"
             android:layout_width="75dp"
-            android:layout_height="723dp"
+            android:layout_height="652dp"
             android:layout_marginBottom="24dp"
 
             >
@@ -34,11 +34,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:backgroundTint="@color/light_gray"
                 android:orientation="vertical"
                 android:paddingTop="15dp"
-                android:paddingBottom="15dp"
-                android:backgroundTint="@color/light_gray"
-                >
+                android:paddingBottom="15dp">
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:layout_width="65dp"
@@ -72,12 +71,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="363dp"
             android:layout_height="43dp"
-            android:orientation="horizontal"
             android:gravity="center"
+            android:orientation="horizontal"
             android:paddingEnd="5dp">
 
             <Button
@@ -85,17 +85,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="3dp"
-                android:text="economics"/>
+                android:text="economics" />
+
             <Button
                 android:id="@+id/testButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="3dp"
-                android:layout_marginEnd="3dp"/>
+                android:layout_marginEnd="3dp" />
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"/>
+                android:layout_marginStart="3dp" />
 
 
         </LinearLayout>
@@ -103,17 +105,24 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/article_browse_recycler"
-            android:layout_width="363dp"
-            android:layout_height="779dp"
-            android:layout_marginBottom="20dp"/>
+            android:layout_width="335dp"
+            android:layout_height="600dp"
+             />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="refresh articles"
+                android:id="@+id/article_browse_refresh_button"/>
+
+        </LinearLayout>
+
 
     </LinearLayout>
-
-
-
-
-
-
 
 
 </LinearLayout>

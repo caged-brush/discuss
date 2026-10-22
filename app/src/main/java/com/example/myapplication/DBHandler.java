@@ -76,9 +76,10 @@ public class DBHandler  extends SQLiteOpenHelper {
         );
 
     // Articles table, to Save/remove article from library
+        //changed from TEXT PRIMARY KEY NOT NULL -> INTEGER PRIMARY KEY AUTOINCREMENT
         db.execSQL(
                 "CREATE TABLE articles (" +
-                "article_id TEXT PRIMARY KEY NOT NULL, " +
+                "article_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "title TEXT NOT NULL, " +
                 "author TEXT NOT NULL DEFAULT '', " +
                 "content_snippet TEXT NOT NULL DEFAULT '', " +
@@ -158,10 +159,12 @@ public class DBHandler  extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void saveArticle(String articleId, String title, String author, String contentSnippet, String sourceUrl, String savedByUid) {
+    //articleID is now auto increment
+
+    public void saveArticle(String title, String author, String contentSnippet, String sourceUrl, String savedByUid) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("article_id", articleId);
+        //values.put("article_id", articleId);
         values.put("title", title);
         values.put("author", author);
         values.put("content_snippet", contentSnippet);

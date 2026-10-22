@@ -32,6 +32,8 @@ android {
 }
 
 dependencies {
+    implementation("com.github.KwabenBerko:News-API-Java:1.0.2")
+    implementation("androidx.webkit:webkit:1.17.1")
     implementation(libs.activity.ktx)
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
