@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -42,6 +43,7 @@ public class ArticleBrowseRecyclerAdapter extends RecyclerView.Adapter<ArticleBr
                 Intent intent = new Intent(context, ArticleView.class);
                 intent.putExtra("title", data.get(position).getTitle());
                 intent.putExtra("url", data.get(position).getUrl());
+                intent.putExtra("source", data.get(position).getSource().toString());
                 intent.putExtra("desc", data.get(position).getDescription());
                 intent.putExtra("author", data.get(position).getAuthor());
                 context.startActivity(intent);

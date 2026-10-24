@@ -76,10 +76,9 @@ public class DBHandler  extends SQLiteOpenHelper {
         );
 
     // Articles table, to Save/remove article from library
-        //changed from TEXT PRIMARY KEY NOT NULL -> INTEGER PRIMARY KEY AUTOINCREMENT
         db.execSQL(
                 "CREATE TABLE articles (" +
-                "article_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "article_id TEXT PRIMARY KEY NOT NULL, " +
                 "title TEXT NOT NULL, " +
                 "author TEXT NOT NULL DEFAULT '', " +
                 "content_snippet TEXT NOT NULL DEFAULT '', " +

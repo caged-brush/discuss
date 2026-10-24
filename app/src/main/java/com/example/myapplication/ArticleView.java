@@ -6,6 +6,7 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +18,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.kwabenaberko.newsapilib.models.Article;
 
 import java.util.ArrayList;
@@ -39,8 +42,7 @@ public class ArticleView extends AppCompatActivity {
         WebView bodyT = findViewById(R.id.articleBody);
         WebSettings webSettings = bodyT.getSettings();
         //webSettings.setJavaScriptEnabled(true);
-        Toast.makeText(this, url, Toast.LENGTH_SHORT).show();
-        titleT.setText(title);
+
         bodyT.loadUrl(url);
         Button save = findViewById(R.id.saveToLib);
 
@@ -53,7 +55,9 @@ public class ArticleView extends AppCompatActivity {
             }
         });
 
-
+        ListView comments = findViewById(R.id.article_view_comments);
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference ref = db.getReference();
 
 
 
