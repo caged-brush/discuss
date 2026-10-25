@@ -18,6 +18,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.kwabenaberko.newsapilib.models.Article;
@@ -54,10 +56,21 @@ public class ArticleView extends AppCompatActivity {
                 //db.saveArticle(title, author, );
             }
         });
-
+        //give every article an ID
         ListView comments = findViewById(R.id.article_view_comments);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference();
+        //every article will have its own section for comments
+        //get article id
+
+
+        DatabaseReference ref = db.getReference("commentsTest");
+        String uID = user.getUid();
+        String comment = "this is a test comment";
+        String commentID = ref.push().getKey();
+        ref.child(commentID).setValue(new Message(uID, intent.getStringExtra("url")));
+
+
 
 
 

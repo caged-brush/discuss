@@ -45,14 +45,14 @@ public class WelcomePage extends AppCompatActivity {
         Button login = findViewById(R.id.WelcomePage_Login);
         Button signup = findViewById(R.id.WelcomePage_SignUp);
 
-        /*
+
         // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference("ChatGroup1");
 
         String id1 = myRef.push().getKey();
         String id2 = myRef.push().getKey();
-        myRef.child(id1).setValue("hello");
+        myRef.child("1").setValue("hello");
         myRef.child(id2).setValue("hello");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -65,7 +65,7 @@ public class WelcomePage extends AppCompatActivity {
 
             }
         });
-*/      login.setOnClickListener(new View.OnClickListener() {
+        login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(WelcomePage.this, Login.class);

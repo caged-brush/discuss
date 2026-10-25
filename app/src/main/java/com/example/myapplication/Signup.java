@@ -84,7 +84,7 @@ public class Signup extends AppCompatActivity {
         super.onStart();
         FirebaseUser curUser = auth.getCurrentUser();
         if(curUser != null){
-            //todo reload the page
+            //todo reload the page or something i dunno
             updateUI(Signup.this);
         }
     }
