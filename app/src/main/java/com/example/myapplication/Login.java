@@ -1,84 +1,122 @@
+
 package com.example.myapplication;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
+import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class Login extends AppCompatActivity {
-    private final String TAG = "LOGIN";
+
+    private static final String TAG = "LOGIN";
+
     private FirebaseAuth auth;
+    private EditText emailT;
+    private EditText passwordT;
+    private Button loginButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-        EditText emailT = findViewById(R.id.login_email);
-        EditText passwordT = findViewById(R.id.login_password);
-        Button login = findViewById(R.id.login_button);
-
-
-        //emails must be properly formatted and paswords must be atleast 6 characters
-        //for firebase to accept them and login
         auth = FirebaseAuth.getInstance();
 
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = emailT.getText().toString();
-                String password = passwordT.getText().toString();
-                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            FirebaseUser user = auth.getCurrentUser();
-                            updateUI(Login.this);
-                        }else{
-                            Log.w(TAG, "login failure");
-                        }
-                    }
-                });
-            }
-        });
+        emailT = findViewById(R.id.login_email);
+        passwordT = findViewById(R.id.login_password);
+        loginButton = findViewById(R.id.login_button);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+        loginButton.setOnClickListener(v -> loginUser());
+
+        TextView signupLink = findViewById(R.id.signup_text);
+
+        signupLink.setOnClickListener(v -> {
+            startActivity(new Intent(Login.this, Signup.class));
         });
     }
+
+    private void loginUser() {
+
+        String email = emailT.getText().toString().trim();
+        String password = passwordT.getText().toString();
+
+        if (email.isEmpty()) {
+            emailT.setError("Email is required");
+            emailT.requestFocus();
+            return;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailT.setError("Enter a valid email address");
+            emailT.requestFocus();
+            return;
+        }
+
+        if (password.isEmpty()) {
+            passwordT.setError("Password is required");
+            passwordT.requestFocus();
+            return;
+        }
+
+        loginButton.setEnabled(false);
+        loginButton.setText("Logging in...");
+
+        auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+
+                    loginButton.setEnabled(true);
+                    loginButton.setText("Login");
+
+                    if (task.isSuccessful()) {
+
+                        Toast.makeText(
+                                Login.this,
+                                "Login successful!",
+                                Toast.LENGTH_SHORT
+                        ).show();
+
+                        updateUI();
+
+                    } else {
+
+                        Log.w(TAG, "Login failed", task.getException());
+
+                        Toast.makeText(
+                                Login.this,
+                                "Login failed. Check your credentials.",
+                                Toast.LENGTH_LONG
+                        ).show();
+                    }
+                });
+    }
+
     @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
+
         FirebaseUser currentUser = auth.getCurrentUser();
-        if(currentUser != null){
-            //todo reload page to browse of something
-            updateUI(Login.this);
+
+        if (currentUser != null) {
+            updateUI();
         }
     }
 
-    public void updateUI(Context context){
-        Intent intent = new Intent(context, ArticleBrowse.class);
+    private void updateUI() {
+        Intent intent = new Intent(
+                Login.this,
+                ArticleBrowse.class
+        );
+
         startActivity(intent);
+        finish();
     }
 }

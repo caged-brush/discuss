@@ -1,96 +1,149 @@
+
 package com.example.myapplication;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
+import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 public class Signup extends AppCompatActivity {
-    private final String TAG = "SIGNUP";
-    private FirebaseAuth auth;
 
+    private static final String TAG = "SIGNUP";
+
+    private FirebaseAuth auth;
+    private EditText usernameT, emailT, passwordT;
+    private Button signupButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_in);
 
         auth = FirebaseAuth.getInstance();
 
-        EditText usernameT = findViewById(R.id.signUp_username);
-        EditText emailT = findViewById(R.id.signup_email);
-        EditText passwordT = findViewById(R.id.signup_password);
-        TextView test = findViewById(R.id.textView2);
+        usernameT = findViewById(R.id.signUp_username);
+        emailT = findViewById(R.id.signup_email);
+        passwordT = findViewById(R.id.signup_password);
+        signupButton = findViewById(R.id.signup_button);
 
-        Button signup = findViewById(R.id.signup_button);
-        //emails must be properly formatted and paswords must be atleast 6 characters
-        //for firebase to accept them and create a new user
-        signup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String username = usernameT.getText().toString();
-                String email = emailT.getText().toString();
-                String password = passwordT.getText().toString();
-                test.setText(email + " " + password);
-                auth.createUserWithEmailAndPassword(email, password).
-                        addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful()){
-                                    Log.d(TAG, "user sign up success");
-                                    FirebaseUser user = auth.getCurrentUser();
-                                    updateUI(Signup.this);
+        TextView loginLink =
+                findViewById(R.id.signup_login_link);
 
-                                }else{
-                                    Log.w(TAG, "user signup failure", task.getException());
-                                    Toast.makeText(Signup.this, "authentication failure", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-            }
-        });
+        signupButton.setOnClickListener(v -> signupUser());
 
-
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+        loginLink.setOnClickListener(v -> {
+            startActivity(new Intent(Signup.this, Login.class));
+            finish();
         });
     }
 
-    @Override
-    public void onStart(){
-        super.onStart();
-        FirebaseUser curUser = auth.getCurrentUser();
-        if(curUser != null){
-            //todo reload the page or something i dunno
-            updateUI(Signup.this);
+    private void signupUser() {
+        String username =
+                usernameT.getText().toString().trim();
+        String email =
+                emailT.getText().toString().trim();
+        String password =
+                passwordT.getText().toString();
+
+        if (username.isEmpty()) {
+            usernameT.setError("Username is required");
+            usernameT.requestFocus();
+            return;
         }
+
+        if (email.isEmpty() ||
+                !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailT.setError("Enter a valid email address");
+            emailT.requestFocus();
+            return;
+        }
+
+        if (password.length() < 6) {
+            passwordT.setError(
+                    "Password must be at least 6 characters"
+            );
+            passwordT.requestFocus();
+            return;
+        }
+
+        signupButton.setEnabled(false);
+        signupButton.setText("Creating account...");
+
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+
+                    if (!task.isSuccessful()) {
+                        signupButton.setEnabled(true);
+                        signupButton.setText("Create Account");
+
+                        Log.w(TAG, "Signup failed",
+                                task.getException());
+
+                        Toast.makeText(
+                                Signup.this,
+                                "Signup failed: " +
+                                        (task.getException() != null
+                                                ? task.getException().getMessage()
+                                                : "Unknown error"),
+                                Toast.LENGTH_LONG
+                        ).show();
+                        return;
+                    }
+
+                    FirebaseUser user = auth.getCurrentUser();
+
+                    if (user == null) {
+                        signupButton.setEnabled(true);
+                        signupButton.setText("Create Account");
+                        Toast.makeText(this,
+                                "Account created, but user unavailable",
+                                Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    UserProfileChangeRequest profile =
+                            new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(username)
+                                    .build();
+
+                    user.updateProfile(profile)
+                            .addOnCompleteListener(profileTask -> {
+                                if (!profileTask.isSuccessful()) {
+                                    Log.w(TAG,
+                                            "Could not save display name",
+                                            profileTask.getException());
+                                    Toast.makeText(
+                                            Signup.this,
+                                            "Account created, but username could not be saved",
+                                            Toast.LENGTH_LONG
+                                    ).show();
+                                } else {
+                                    Toast.makeText(
+                                            Signup.this,
+                                            "Account created successfully!",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                }
+
+                                openArticleBrowse();
+                            });
+                });
     }
 
-    public void updateUI(Context context){
-        Intent intent = new Intent(context, ArticleBrowse.class);
+    private void openArticleBrowse() {
+        Intent intent =
+                new Intent(Signup.this, ArticleBrowse.class);
         startActivity(intent);
+        finish();
     }
 }
