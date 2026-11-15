@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".group_chat">
+    tools:context=".GroupChatActivity">
 
     <!-- Left navigation strip -->
     <com.google.android.material.card.MaterialCardView
@@ -46,7 +46,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="ArticleTitle"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -72,6 +73,15 @@
         app:layout_constraintBottom_toTopOf="@id/messageComposer"
         tools:itemCount="4"
         tools:listitem="@layout/item_chat_message" />
+
+    <TextView
+        android:id="@+id/chatEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No messages yet."
+        android:textColor="#222222"
+        app:layout_constraintStart_toStartOf="@id/rvChatMessages"
+        app:layout_constraintTop_toTopOf="@id/rvChatMessages" />
 
     <!-- Message input and send button -->
     <LinearLayout
@@ -102,6 +112,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="56dp"
                 android:maxLines="4"
+                android:maxLength="4000"
                 android:background="@null"
                 android:gravity="center_vertical"
                 android:hint="Message..."

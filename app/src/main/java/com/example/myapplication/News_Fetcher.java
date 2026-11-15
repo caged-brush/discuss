@@ -31,6 +31,7 @@ public class News_Fetcher extends ViewModel {
     }
 
     public void fetchArticles(String query) {
+        error.setValue(null);
         newsApiClient.getEverything(
                 new EverythingRequest.Builder()
                         .q(query)

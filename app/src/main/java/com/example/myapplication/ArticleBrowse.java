@@ -1,131 +1,69 @@
 package com.example.myapplication;
 
-import static kotlinx.coroutines.future.FutureKt.await;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import java.util.Collections;
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatImageButton;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.ViewModel;
+
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.kwabenaberko.newsapilib.NewsApiClient;
-import com.kwabenaberko.newsapilib.models.Article;
-import com.kwabenaberko.newsapilib.models.request.EverythingRequest;
-import com.kwabenaberko.newsapilib.models.response.ArticleResponse;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.firebase.auth.FirebaseAuth;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class ArticleBrowse extends AppCompatActivity {
-    int CBcollapsed = 20;
-    int CBexpanded = 75;
-    Boolean isCBexpanded = true;
-
-    ArrayList<Article> articles = new ArrayList<>();
-
+public class ArticleBrowse extends SignedInActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        if (isFinishing()) return;
         setContentView(R.layout.activity_article_browse);
 
-        News_Fetcher newsFetcher = new ViewModelProvider(this).get(News_Fetcher.class);
-        newsFetcher.fetchArticles("economics + europe");
-
-        Button testBtn = findViewById(R.id.testButton);
-        Button economics = findViewById(R.id.article_browse_economics);
         RecyclerView recycler = findViewById(R.id.article_browse_recycler);
-        FrameLayout contactBar = findViewById(R.id.article_browse_contactBar);
-        AppCompatImageButton contactButton = findViewById(R.id.article_browse_contact_button);
-
-
-        testBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ArticleBrowse.this, ArticleView.class);
-                startActivity(intent);
-            }
-        });
-        ArticleBrowseRecyclerAdapter adapter = new ArticleBrowseRecyclerAdapter(articles, ArticleBrowse.this);
-        newsFetcher.getArticles().observe(this, list -> {
-            adapter.updateData(list);
-        });
+        ArticleBrowseRecyclerAdapter adapter = new ArticleBrowseRecyclerAdapter(new ArrayList<>(), this);
         recycler.setAdapter(adapter);
-        LinearLayoutManager llm = new LinearLayoutManager(ArticleBrowse.this, LinearLayoutManager.VERTICAL, false);
-        //GridLayoutManager glm = new GridLayoutManager(ArticleBrowse.this, 2);
-        recycler.setLayoutManager(llm);
 
-        Button refresh = findViewById(R.id.article_browse_refresh_button);
-        refresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                newsFetcher.fetchArticles("economics + europe");
-                newsFetcher.getArticles().observe(ArticleBrowse.this, list -> {
-                    Collections.shuffle(list);
-                    adapter.updateData(list);
-                });
+        TextView status = findViewById(R.id.articleStatus);
+        News_Fetcher news = new ViewModelProvider(this).get(News_Fetcher.class);
+        news.getArticles().observe(this, articles -> {
+            adapter.updateData(articles);
+            status.setText("No articles found.");
+            status.setVisibility(articles.isEmpty() ? View.VISIBLE : View.GONE);
+        });
+        news.getError().observe(this, error -> {
+            if (error != null) {
+                status.setText("Unable to load articles. Try refreshing.");
+                status.setVisibility(View.VISIBLE);
             }
         });
 
+        findViewById(R.id.article_browse_refresh_button).setOnClickListener(view -> fetchArticles(news, status));
+        if (savedInstanceState == null) fetchArticles(news, status);
 
-
-        /*
-        https://stackoverflow.com/questions/2963152/how-to-resize-a-custom-view-programmatically
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) someLayout.getLayoutParams();
-            params.height = 130;
-            someLayout.setLayoutParams(params);*/
-
-        contactButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isCBexpanded = changeContactBar(isCBexpanded, contactBar);
-
-            }
-        });
-
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        findViewById(R.id.openContacts).setOnClickListener(view ->
+                startActivity(new Intent(this, ContactActivity.class)));
+        findViewById(R.id.openGroups).setOnClickListener(view ->
+                startActivity(new Intent(this, GroupListActivity.class)));
+        findViewById(R.id.accountMenu).setOnClickListener(view ->
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle("Account")
+                        .setItems(new String[]{"My profile", "Sign out"}, (dialog, item) -> {
+                            if (item == 0) startActivity(new Intent(this, ProfileActivity.class));
+                            else signOut();
+                        })
+                        .show());
     }
 
-    public Boolean changeContactBar(Boolean isCBexpanded, FrameLayout contactBar){
-        if(isCBexpanded){
-            ViewGroup.LayoutParams params = contactBar.getLayoutParams();
-            params.width = (int) getResources().getDimension(R.dimen.ArticleBrowseCollapsedCB);
-            //params.height = 732;
-            contactBar.setLayoutParams(params);
-
-        }else{
-            ViewGroup.LayoutParams params = contactBar.getLayoutParams();
-            params.width = (int) getResources().getDimension(R.dimen.ArticleBrowseExpandedCB);
-           // params.height = 732;
-            contactBar.setLayoutParams(params);
-
-        }
-
-        return !isCBexpanded;
+    private void fetchArticles(News_Fetcher news, TextView status) {
+        status.setText("Loading articles…");
+        status.setVisibility(View.VISIBLE);
+        news.fetchArticles("economics + europe");
     }
 
-
+    private void signOut() {
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(this, WelcomePage.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+    }
 }

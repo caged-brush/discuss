@@ -32,6 +32,9 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".GroupListActivity"
+            android:exported="false" />
+        <activity
             android:name=".CreateGroupChat"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
@@ -44,7 +47,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".group_chat"
+            android:name=".GroupChatActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity

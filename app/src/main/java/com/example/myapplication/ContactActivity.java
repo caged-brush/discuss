@@ -1,84 +1,115 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.List;
-import android.widget.ImageButton;
 
-public class ContactActivity extends AppCompatActivity {
-
-    private RecyclerView rvContacts;
-    private FloatingActionButton fabAddContact;
-    private ImageButton btnTopAddContact;
-    private ContactAdapter adapter;
-    private List<ContactItem> contactList;
-    private DBHandler dbHandler;
-    
-    // In a real app, this would be passed via Intent or fetched from a session manager
-    private String currentUserUid = "user1"; 
+public class ContactActivity extends SignedInActivity {
+    private RecyclerView contactsView;
+    private TextView emptyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (isFinishing()) return;
         setContentView(R.layout.activity_contact);
+        contactsView = findViewById(R.id.rvContacts);
+        emptyView = findViewById(R.id.contactsEmpty);
+        findViewById(R.id.btnTopAddContact).setOnClickListener(view -> showAddContactDialog());
+        findViewById(R.id.blockedUsers).setOnClickListener(view -> showBlockedUsers());
+    }
 
-        dbHandler = new DBHandler(this);
-        rvContacts = findViewById(R.id.rvContacts);
-        fabAddContact = findViewById(R.id.fabAddContact);
-        btnTopAddContact = findViewById(R.id.btnTopAddContact);
-        
-        rvContacts.setLayoutManager(new LinearLayoutManager(this));
-        
-        loadContacts();
-
-        fabAddContact.setOnClickListener(v -> showAddContactDialog());
-        btnTopAddContact.setOnClickListener(v -> showAddContactDialog());
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isFinishing()) loadContacts();
     }
 
     private void loadContacts() {
-        contactList = new ArrayList<>();
-        Cursor cursor = dbHandler.getContacts(currentUserUid);
-        if (cursor != null) {
+        List<ContactAdapter.Contact> contacts = new ArrayList<>();
+        try (Cursor cursor = db.getContacts(currentUid)) {
             while (cursor.moveToNext()) {
-                String uid = cursor.getString(cursor.getColumnIndexOrThrow("uid"));
-                String username = cursor.getString(cursor.getColumnIndexOrThrow("username"));
-                String firstName = cursor.getString(cursor.getColumnIndexOrThrow("first_name"));
-                String lastName = cursor.getString(cursor.getColumnIndexOrThrow("last_name"));
-                String info = "@" + username;
-                String name = firstName + " " + lastName;
-                if (name.trim().isEmpty()) {
-                    name = username;
-                }
-                contactList.add(new ContactItem(uid, name, info));
+                contacts.add(new ContactAdapter.Contact(cursor));
             }
-            cursor.close();
         }
+        contactsView.setAdapter(new ContactAdapter(contacts,
+                contact -> openProfile(contact.uid), this::confirmRemoval));
+        emptyView.setVisibility(contacts.isEmpty() ? View.VISIBLE : View.GONE);
+    }
 
-        adapter = new ContactAdapter(contactList, dbHandler, currentUserUid);
-        rvContacts.setAdapter(adapter);
+    private void openProfile(String uid) {
+        startActivity(new Intent(this, ProfileActivity.class).putExtra(ProfileActivity.EXTRA_UID, uid));
+    }
+
+    private void confirmRemoval(ContactAdapter.Contact contact) {
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Remove contact?")
+                .setMessage(contact.name)
+                .setPositiveButton("Remove", (dialog, item) -> {
+                    db.removeContact(currentUid, contact.uid);
+                    loadContacts();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void showAddContactDialog() {
         EditText input = new EditText(this);
-        input.setHint("Enter User UID");
-        new MaterialAlertDialogBuilder(this)
-                .setTitle("Add Contact")
+        input.setSingleLine(true);
+        input.setHint("Username or UID");
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setTitle("Add contact")
                 .setView(input)
-                .setPositiveButton("Add", (dialog, which) -> {
-                    String contactUid = input.getText().toString().trim();
-                    if (!contactUid.isEmpty() && !contactUid.equals(currentUserUid)) {
-                        dbHandler.addContact(currentUserUid, contactUid);
-                        loadContacts(); // Refresh list
-                    }
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .setPositiveButton("Add", null)
+                .setNegativeButton("Cancel", null)
                 .show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
+            String query = input.getText().toString().trim();
+            if (query.startsWith("@")) query = query.substring(1);
+            String uid = db.findUserUid(query);
+            if (uid == null) {
+                input.setError("No local user matches. They must sign in on this device first.");
+            } else if (uid.equals(currentUid)) {
+                input.setError("Choose another user.");
+            } else if (db.hasBlockBetween(currentUid, uid)) {
+                input.setError("This user is unavailable while a block is active.");
+            } else if (db.hasContact(currentUid, uid)) {
+                input.setError("This user is already in your contacts.");
+            } else {
+                db.addContact(currentUid, uid);
+                loadContacts();
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private void showBlockedUsers() {
+        List<ContactAdapter.Contact> blocked = new ArrayList<>();
+        try (Cursor cursor = db.getBlockedUsers(currentUid)) {
+            while (cursor.moveToNext()) {
+                blocked.add(new ContactAdapter.Contact(cursor));
+            }
+        }
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this)
+                .setTitle("Blocked users")
+                .setPositiveButton("Done", null);
+        if (blocked.isEmpty()) {
+            dialog.setMessage("You haven't blocked anyone.");
+        } else {
+            String[] usernames = blocked.stream().map(contact -> "@" + contact.username).toArray(String[]::new);
+            dialog.setItems(usernames, (window, position) -> openProfile(blocked.get(position).uid));
+        }
+        dialog.show();
     }
 }

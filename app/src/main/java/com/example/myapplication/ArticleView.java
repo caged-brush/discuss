@@ -1,83 +1,61 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
+public class ArticleView extends SignedInActivity {
+    static Intent intent(Context context, String title, String url, String author, String description) {
+        return new Intent(context, ArticleView.class)
+                .putExtra("title", title)
+                .putExtra("url", url)
+                .putExtra("author", author)
+                .putExtra("desc", description);
+    }
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.kwabenaberko.newsapilib.models.Article;
-
-import java.util.ArrayList;
-
-public class ArticleView extends AppCompatActivity {
+    static boolean isArticleUrl(String url) {
+        if (url == null) return false;
+        Uri uri = Uri.parse(url);
+        return ("https".equalsIgnoreCase(uri.getScheme()) || "http".equalsIgnoreCase(uri.getScheme()))
+                && uri.getHost() != null && !uri.getHost().isEmpty();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        if (isFinishing()) return;
+        String url = getIntent().getStringExtra("url");
+        if (!isArticleUrl(url)) {
+            showMessage("Article unavailable.");
+            finish();
+            return;
+        }
         setContentView(R.layout.activity_article_view);
 
-        Intent intent = getIntent();
-        String title = intent.getStringExtra("title");
-        String url = intent.getStringExtra("url");
-        String desc = intent.getStringExtra("desc");
-        String author = intent.getStringExtra("author");
+        String title = getIntent().getStringExtra("title");
+        String articleTitle = title == null || title.trim().isEmpty() ? url : title.trim();
+        TextView heading = findViewById(R.id.article_view_title);
+        heading.setText(articleTitle);
 
-        TextView titleT= findViewById(R.id.article_view_title);
-        WebView bodyT = findViewById(R.id.articleBody);
-        WebSettings webSettings = bodyT.getSettings();
-        //webSettings.setJavaScriptEnabled(true);
+        WebView webView = findViewById(R.id.articleBody);
+        webView.loadUrl(url);
 
-        bodyT.loadUrl(url);
         Button save = findViewById(R.id.saveToLib);
-
-        save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DBHandler db = new DBHandler(ArticleView.this);
-
-                //db.saveArticle(title, author, );
-            }
+        save.setOnClickListener(view -> {
+            db.saveArticle(articleTitle, getIntent().getStringExtra("author"),
+                    getIntent().getStringExtra("desc"), url, currentUid);
+            showMessage("Article saved to your library.");
         });
-        //give every article an ID
-        ListView comments = findViewById(R.id.article_view_comments);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        //every article will have its own section for comments
-        //get article id
 
-
-        DatabaseReference ref = db.getReference("commentsTest");
-        String uID = user.getUid();
-        String comment = "this is a test comment";
-        String commentID = ref.push().getKey();
-        ref.child(commentID).setValue(new Message(uID, intent.getStringExtra("url")));
-
-
-
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+        findViewById(R.id.shareArticle).setOnClickListener(view -> {
+            Intent share = new Intent(Intent.ACTION_SEND)
+                    .setType("text/plain")
+                    .putExtra(Intent.EXTRA_TEXT, url);
+            startActivity(Intent.createChooser(share, null));
         });
     }
 }
