@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,27 +10,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="@dimen/screen_padding">
 
         <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginBottom="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"
-            android:src="@android:drawable/ic_menu_revert"
-            android:tint="?android:attr/textColorPrimary" />
+            android:contentDescription="@string/back"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="?android:attr/textColorPrimary" />
 
         <TextView
             android:id="@+id/tvUserName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+            android:textAppearance="@style/TextAppearance.Discuss.Heading" />
 
         <TextView
             android:id="@+id/profileUsername"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Discuss.Supporting" />
 
         <RatingBar
             android:id="@+id/ratingBarUser"
@@ -44,32 +47,33 @@
         <TextView
             android:id="@+id/averageRating"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.Discuss.Supporting" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/rateUser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:text="Rate user" />
+                android:text="@string/rate_user" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/blockUser"
-                style="?attr/materialButtonOutlinedStyle"
+                style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Block user" />
+                android:text="@string/block_user" />
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Recent Articles"
+            android:text="@string/recent_articles"
             android:textAppearance="?attr/textAppearanceTitleMedium" />
 
         <LinearLayout

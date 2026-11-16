@@ -29,17 +29,17 @@ public class CreateGroupChat extends SignedInActivity {
             while (cursor.moveToNext()) {
                 ContactAdapter.Contact contact = new ContactAdapter.Contact(cursor);
                 if (!db.hasBlockBetween(currentUid, contact.uid)) {
-                    addChoice(contactsView, contacts, contact.uid, "@" + contact.username);
+                    addChoice(contactsView, contacts, contact.uid, getString(R.string.username_handle, contact.username));
                 }
             }
         }
-        if (contacts.isEmpty()) addStatus(contactsView, "Add an available contact first.");
+        if (contacts.isEmpty()) addStatus(contactsView, getString(R.string.contact_required));
 
         LinearLayout articlesView = findViewById(R.id.articlesContainer);
         for (SavedArticle article : SavedArticle.load(db, currentUid)) {
             addChoice(articlesView, articles, article.id, article.title);
         }
-        if (articles.isEmpty()) addStatus(articlesView, "Save an article to your library to share it.");
+        if (articles.isEmpty()) addStatus(articlesView, getString(R.string.saved_article_required));
 
         if (savedInstanceState != null) {
             restoreChoices(contacts, savedInstanceState.getStringArrayList("contacts"));
@@ -88,7 +88,7 @@ public class CreateGroupChat extends SignedInActivity {
         EditText title = findViewById(R.id.edtGroupTitle);
         String name = title.getText().toString().trim();
         if (name.isEmpty()) {
-            title.setError("Enter a group name.");
+            title.setError(getString(R.string.group_name_required));
             return;
         }
         try {
@@ -98,7 +98,7 @@ public class CreateGroupChat extends SignedInActivity {
         } catch (IllegalArgumentException exception) {
             showMessage(exception.getMessage());
         } catch (SQLiteException exception) {
-            showMessage("Unable to create the group. Try again.");
+            showMessage(getString(R.string.group_create_failed));
         }
     }
 }

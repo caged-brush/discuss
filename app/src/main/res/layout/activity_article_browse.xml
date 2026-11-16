@@ -6,56 +6,76 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="12dp">
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingTop="12dp"
+        android:text="@string/news_title"
+        android:textAppearance="@style/TextAppearance.Discuss.Heading" />
 
-        <Button
-            android:id="@+id/openContacts"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0dp"
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Contacts" />
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp">
 
-        <Button
-            android:id="@+id/openGroups"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_weight="1"
-            android:text="Chats" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/openContacts"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/contacts_title" />
 
-        <Button
-            android:id="@+id/accountMenu"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_weight="1"
-            android:text="Account" />
-    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/openGroups"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/chats_title" />
 
-    <Button
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/accountMenu"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/account_title" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/article_browse_refresh_button"
+        style="?attr/materialButtonOutlinedStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:text="Refresh articles" />
+        android:layout_marginStart="@dimen/screen_padding"
+        android:layout_marginBottom="8dp"
+        android:text="@string/refresh_articles" />
 
     <TextView
         android:id="@+id/articleStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp" />
+        android:accessibilityLiveRegion="polite"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingBottom="12dp"
+        android:textAppearance="@style/TextAppearance.Discuss.Supporting" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/article_browse_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingBottom="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
 </LinearLayout>

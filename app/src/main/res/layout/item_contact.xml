@@ -4,21 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="16dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:paddingHorizontal="@dimen/screen_padding"
     android:paddingVertical="12dp">
 
     <!--  Circular contact icon -->
-    <com.google.android.material.imageview.ShapeableImageView
+    <TextView
         android:id="@+id/ivContactAvatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:scaleType="centerCrop"
-        android:src="@mipmap/ic_launcher"
-        app:shapeAppearanceOverlay="@style/CircleImageViewStyle"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_avatar"
+        android:gravity="center"
+        android:importantForAccessibility="no"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
+        android:textColor="?attr/colorOnSecondaryContainer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        tools:text="S" />
 
     <!--  Contact name -->
     <TextView
@@ -28,8 +31,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
         android:textColor="?android:attr/textColorPrimary"
-        android:textSize="16sp"
-        android:textStyle="bold"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
         app:layout_constraintBottom_toTopOf="@id/tvContactInfo"
         app:layout_constraintEnd_toStartOf="@id/btnRemoveContact"
         app:layout_constraintStart_toEndOf="@id/ivContactAvatar"
@@ -55,11 +57,11 @@
     <!--  Delete button -->
     <ImageButton
         android:id="@+id/btnRemoveContact"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Remove Contact"
-        android:src="@android:drawable/ic_menu_delete"
+        android:contentDescription="@string/remove_contact_description"
+        android:src="@drawable/ic_delete"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

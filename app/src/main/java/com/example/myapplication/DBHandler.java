@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class DBHandler extends SQLiteOpenHelper {
     private static final String DB_NAME = "discuss";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 4;
     private static final String BLOCK_EXISTS =
             "EXISTS (SELECT 1 FROM block WHERE (blocker_uid=? AND blocked_uid=%1$s) "
                     + "OR (blocked_uid=? AND blocker_uid=%1$s))";
@@ -83,30 +83,7 @@ public class DBHandler extends SQLiteOpenHelper {
                         ")"
         );
 
-        db.execSQL(
-                "CREATE TABLE articles (" +
-                "article_id TEXT PRIMARY KEY NOT NULL, " +
-                "title TEXT NOT NULL, " +
-                "author TEXT NOT NULL DEFAULT '', " +
-                "content_snippet TEXT NOT NULL DEFAULT '', " +
-                "source_url TEXT NOT NULL DEFAULT '', " +
-                "saved_by_uid TEXT NOT NULL, " +
-                "saved_at INTEGER NOT NULL, " +
-                "FOREIGN KEY (saved_by_uid) REFERENCES users(uid) ON DELETE CASCADE" +
-                ")"
-        );
-
-        db.execSQL(
-                "CREATE TABLE article_ratings (" +
-                "article_id TEXT NOT NULL, " +
-                "user_uid TEXT NOT NULL, " +
-                "rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5), " +
-                "rated_at INTEGER NOT NULL, " +
-                "PRIMARY KEY (article_id, user_uid), " +
-                "FOREIGN KEY (article_id) REFERENCES articles(article_id) ON DELETE CASCADE, " +
-                "FOREIGN KEY (user_uid) REFERENCES users(uid) ON DELETE CASCADE" +
-                ")"
-        );
+        createArticleTables(db);
 
         db.execSQL(
                 "CREATE TABLE chat_groups (" +
@@ -133,9 +110,63 @@ public class DBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        if (oldVersion == 1) {
+        // The earlier local-auth build and the Firebase build both used version 2.
+        if (hasLegacyArticleCatalog(db)) {
+            migrateLegacyCatalog(db);
+        } else if (oldVersion == 1) {
             createMessagesTable(db);
         }
+    }
+
+    private boolean hasLegacyArticleCatalog(SQLiteDatabase db) {
+        try (Cursor columns = db.rawQuery("PRAGMA table_info(articles)", null)) {
+            int name = columns.getColumnIndexOrThrow("name");
+            while (columns.moveToNext()) {
+                if ("category".equals(columns.getString(name))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void migrateLegacyCatalog(SQLiteDatabase db) {
+        // Catalog articles have no source URL. Preserve them and their links from
+        // saved articles, ratings and groups instead of creating broken news links.
+        db.execSQL("ALTER TABLE articles RENAME TO legacy_articles");
+        db.execSQL("ALTER TABLE article_ratings RENAME TO legacy_article_ratings");
+        createArticleTables(db);
+
+        // Keep original rows, including media metadata, for older chat content.
+        db.execSQL("ALTER TABLE messages RENAME TO legacy_messages");
+        db.execSQL("DROP INDEX messages_by_group");
+        createMessagesTable(db);
+        db.execSQL("INSERT INTO messages (message_id, group_id, sender_uid, body, created_at) "
+                + "SELECT m.message_id, m.group_id, m.sender_uid, "
+                + "CASE WHEN length(trim(m.body)) > 0 THEN m.body "
+                + "WHEN length(trim(a.title)) > 0 THEN a.title ELSE 'Legacy attachment' END, "
+                + "m.sent_at FROM legacy_messages m "
+                + "LEFT JOIN legacy_articles a ON a.article_id = m.article_id");
+    }
+
+    private void createArticleTables(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE articles ("
+                + "article_id TEXT PRIMARY KEY NOT NULL, "
+                + "title TEXT NOT NULL, "
+                + "author TEXT NOT NULL DEFAULT '', "
+                + "content_snippet TEXT NOT NULL DEFAULT '', "
+                + "source_url TEXT NOT NULL DEFAULT '', "
+                + "saved_by_uid TEXT NOT NULL, "
+                + "saved_at INTEGER NOT NULL, "
+                + "FOREIGN KEY (saved_by_uid) REFERENCES users(uid) ON DELETE CASCADE)");
+        db.execSQL("CREATE TABLE article_ratings ("
+                + "article_id TEXT NOT NULL, "
+                + "user_uid TEXT NOT NULL, "
+                + "rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5), "
+                + "rated_at INTEGER NOT NULL, "
+                + "PRIMARY KEY (article_id, user_uid), "
+                + "FOREIGN KEY (article_id) REFERENCES articles(article_id) ON DELETE CASCADE, "
+                + "FOREIGN KEY (user_uid) REFERENCES users(uid) ON DELETE CASCADE)");
     }
 
     private void createMessagesTable(SQLiteDatabase db) {
@@ -378,7 +409,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public Cursor getMessages(String groupId, String uid) {
         return getReadableDatabase().rawQuery(
-                "SELECT m.sender_uid, u.username, m.body, m.article_url, m.created_at "
+                "SELECT m.sender_uid, u.username, m.body, m.article_url, m.created_at, m.message_id "
                         + "FROM messages m JOIN users u ON u.uid=m.sender_uid "
                         + "JOIN chat_groups g ON g.group_id=m.group_id "
                         + "LEFT JOIN group_members member ON member.group_id=g.group_id AND member.member_uid=? "

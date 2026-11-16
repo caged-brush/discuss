@@ -20,11 +20,11 @@ public class News_Fetcher extends ViewModel {
 
     // 1. Private, writable holder for the data
     private final MutableLiveData<ArrayList<Article>> articles = new MutableLiveData<>();
-    private final MutableLiveData<String> error = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> error = new MutableLiveData<>();
 
     // 2. Public, read-only view for the UI
     public LiveData<ArrayList<Article>> getArticles() { return articles; }
-    public LiveData<String> getError() { return error; }
+    public LiveData<Boolean> getError() { return error; }
 
     public News_Fetcher() {
 
@@ -41,14 +41,23 @@ public class News_Fetcher extends ViewModel {
                 new NewsApiClient.ArticlesResponseCallback() {
                     @Override
                     public void onSuccess(ArticleResponse response) {
-                        // 3. Publish the result
-                        articles.postValue(new ArrayList<>(response.getArticles()));
+                        if (response == null || response.getArticles() == null) {
+                            error.postValue(true);
+                            return;
+                        }
+                        ArrayList<Article> validArticles = new ArrayList<>();
+                        for (Article article : response.getArticles()) {
+                            if (article != null && ArticleView.isArticleUrl(article.getUrl())) {
+                                validArticles.add(article);
+                            }
+                        }
+                        articles.postValue(validArticles);
                     }
 
                     @Override
                     public void onFailure(Throwable e) {
                         Log.d(TAG, "news api failure", e);
-                        error.postValue(e.getMessage());
+                        error.postValue(true);
                     }
                 });
     }

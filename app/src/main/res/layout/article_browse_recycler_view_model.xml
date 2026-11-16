@@ -1,32 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Discuss.Panel"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:paddingTop="20dp"
-    android:paddingStart="5dp"
-    android:paddingEnd="10dp"
-    android:paddingBottom="20dp">
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true">
 
-    <TextView
-        android:id="@+id/article_browse_recycler_article_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Article Title"
-        android:textSize="30sp"
-        android:gravity="center"
-     />
+        android:orientation="vertical"
+        android:padding="16dp">
 
+        <TextView
+            android:id="@+id/article_browse_recycler_article_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceTitleLarge"
+            tools:text="Example headline" />
 
-    <TextView
-        android:id="@+id/article_browse_recycler_thumbnail_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingEnd="10dp"
-        android:gravity="center_horizontal"
-        android:text="uiodafhiuhdfiuashfidsahfisdahfiuasdhuifhdsauihfuisadhfiuoviodafhiuhdfiuashfidsahfisdahfiuiodafhiuhdiodafhiuhdfiuashfidsahfisdahfiuasdhuifhdsauihfuisadhfiuovsdvjasd bvuysfiuashfidsahfisdahfiuasdhuifhdsauihfuisadhfiuovsdvjasd bvuysasdhuifhdsauihfuisadhfiuovsdvjasd bvuyssdvjasd bvuysagm nfweHWEFHUFIH ASD[I AHFIUDSAH IF HSDA"
-        android:textSize="15sp"
-       />
+        <TextView
+            android:id="@+id/article_browse_recycler_thumbnail_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textAppearance="@style/TextAppearance.Discuss.Supporting"
+            tools:text="An example article summary." />
 
-
-</LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

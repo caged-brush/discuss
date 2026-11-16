@@ -2,14 +2,10 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,13 +32,7 @@ abstract class SignedInActivity extends AppCompatActivity {
     @Override
     public void setContentView(int layout) {
         super.setContentView(layout);
-        View root = findViewById(R.id.main);
-        ViewCompat.setOnApplyWindowInsetsListener(root, (view, insets) -> {
-            Insets padding = insets.getInsets(WindowInsetsCompat.Type.systemBars()
-                    | WindowInsetsCompat.Type.displayCutout() | WindowInsetsCompat.Type.ime());
-            view.setPadding(padding.left, padding.top, padding.right, padding.bottom);
-            return insets;
-        });
+        ScreenInsets.apply(findViewById(R.id.main));
     }
 
     protected void showMessage(String message) {

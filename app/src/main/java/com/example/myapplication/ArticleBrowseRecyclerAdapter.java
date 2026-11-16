@@ -1,25 +1,34 @@
 package com.example.myapplication;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kwabenaberko.newsapilib.models.Article;
 
-import java.util.ArrayList;
+import java.util.Objects;
 
-public class ArticleBrowseRecyclerAdapter extends RecyclerView.Adapter<ArticleBrowseRecyclerAdapter.ArticleHolder> {
-    private final ArrayList<Article> articles;
-    private final Context context;
+final class ArticleBrowseRecyclerAdapter extends ListAdapter<Article, ArticleBrowseRecyclerAdapter.ArticleHolder> {
+    ArticleBrowseRecyclerAdapter() {
+        super(new DiffUtil.ItemCallback<Article>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull Article oldItem, @NonNull Article newItem) {
+                return oldItem.getUrl().equals(newItem.getUrl());
+            }
 
-    public ArticleBrowseRecyclerAdapter(ArrayList<Article> articles, Context context) {
-        this.articles = articles;
-        this.context = context;
+            @Override
+            public boolean areContentsTheSame(@NonNull Article oldItem, @NonNull Article newItem) {
+                return Objects.equals(oldItem.getTitle(), newItem.getTitle())
+                        && Objects.equals(oldItem.getDescription(), newItem.getDescription())
+                        && Objects.equals(oldItem.getAuthor(), newItem.getAuthor());
+            }
+        });
     }
 
     @NonNull
@@ -31,24 +40,15 @@ public class ArticleBrowseRecyclerAdapter extends RecyclerView.Adapter<ArticleBr
 
     @Override
     public void onBindViewHolder(@NonNull ArticleHolder holder, int position) {
-        Article article = articles.get(position);
-        holder.title.setText(article.getTitle());
-        holder.description.setText(article.getDescription());
-        holder.itemView.setOnClickListener(view -> context.startActivity(ArticleView.intent(
-                context, article.getTitle(), article.getUrl(), article.getAuthor(), article.getDescription())));
-    }
-
-    @Override
-    public int getItemCount() {
-        return articles.size();
-    }
-
-    public void updateData(ArrayList<Article> updated) {
-        articles.clear();
-        for (Article article : updated) {
-            if (article != null && ArticleView.isArticleUrl(article.getUrl())) articles.add(article);
-        }
-        notifyDataSetChanged();
+        Article article = getItem(position);
+        String title = article.getTitle();
+        String description = article.getDescription();
+        holder.title.setText(title == null || title.trim().isEmpty() ? article.getUrl() : title);
+        holder.description.setText(description);
+        holder.description.setVisibility(description == null || description.trim().isEmpty()
+                ? View.GONE : View.VISIBLE);
+        holder.itemView.setOnClickListener(view -> view.getContext().startActivity(ArticleView.intent(
+                view.getContext(), title, article.getUrl(), article.getAuthor(), description)));
     }
 
     static final class ArticleHolder extends RecyclerView.ViewHolder {

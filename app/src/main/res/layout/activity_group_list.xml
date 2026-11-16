@@ -8,27 +8,33 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Group chats"
-        android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+        android:padding="@dimen/screen_padding"
+        android:text="@string/group_chats"
+        android:textAppearance="@style/TextAppearance.Discuss.Heading" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/newGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="New group" />
+        android:layout_marginStart="@dimen/screen_padding"
+        android:layout_marginBottom="8dp"
+        android:text="@string/new_group" />
 
     <ListView
         android:id="@+id/groupsList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:divider="?attr/colorOutlineVariant"
+        android:dividerHeight="1dp" />
 
     <TextView
         android:id="@+id/groupsEmpty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="No group chats yet." />
+        android:padding="@dimen/screen_padding"
+        android:text="@string/no_groups"
+        android:textAppearance="@style/TextAppearance.Discuss.Supporting" />
 </LinearLayout>

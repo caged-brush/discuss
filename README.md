@@ -7,11 +7,16 @@ Discuss uses Firebase Authentication for sign-in and NewsAPI for article browsin
 With the Android SDK configured, run the following commands from the project directory:
 
 ```powershell
-.\gradlew.bat testDebugUnitTest assembleDebug
-.\gradlew.bat connectedDebugAndroidTest
+.\gradlew.bat testDebugUnitTest assembleDebug assembleDebugAndroidTest lintDebug
 ```
 
-The second command requires a running Android emulator or connected device.
+On macOS or Linux, use `./gradlew` in place of `.\gradlew.bat`. With one emulator or device connected and `adb` on your path, install the APKs in place and run the tests. This preserves the installed app's data and sign-in session.
+
+```text
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb install -r -t app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+adb shell am instrument -w com.example.myapplication.test/androidx.test.runner.AndroidJUnitRunner
+```
 
 1. Sign in with two Firebase test accounts on the same installation, signing out between accounts via **Account → Sign out**.
 2. As the first account, open **Contacts**, add the second account by username, and tap its row to submit a rating. Change your rating and verify that the average updates.

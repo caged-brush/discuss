@@ -6,34 +6,17 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
     tools:context=".GroupChatActivity">
-
-    <!-- Left navigation strip -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/navigationStrip"
-        android:layout_width="6dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="100dp"
-        app:cardBackgroundColor="#C9D3DC"
-        app:cardCornerRadius="3dp"
-        app:cardElevation="0dp"
-        app:strokeWidth="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
 
     <!-- Chat title -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/chatHeader"
         android:layout_width="0dp"
-        android:layout_height="52dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="24dp"
-        app:cardBackgroundColor="#666666"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/screen_padding"
+        android:layout_marginEnd="@dimen/screen_padding"
+        android:layout_marginTop="8dp"
+        app:cardBackgroundColor="?attr/colorSurfaceContainer"
         app:cardCornerRadius="12dp"
         app:cardElevation="0dp"
         app:strokeWidth="0dp"
@@ -44,13 +27,11 @@
         <TextView
             android:id="@+id/tvChatTitle"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textAppearance="?attr/textAppearanceTitleLarge" />
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -59,8 +40,8 @@
         android:id="@+id/rvChatMessages"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="@dimen/screen_padding"
+        android:layout_marginEnd="@dimen/screen_padding"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:clipToPadding="false"
@@ -78,8 +59,8 @@
         android:id="@+id/chatEmpty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No messages yet."
-        android:textColor="#222222"
+        android:text="@string/no_messages"
+        android:textAppearance="@style/TextAppearance.Discuss.Supporting"
         app:layout_constraintStart_toStartOf="@id/rvChatMessages"
         app:layout_constraintTop_toTopOf="@id/rvChatMessages" />
 
@@ -88,8 +69,8 @@
         android:id="@+id/messageComposer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="@dimen/screen_padding"
+        android:layout_marginEnd="@dimen/screen_padding"
         android:layout_marginBottom="20dp"
         android:gravity="bottom"
         android:orientation="horizontal"
@@ -101,7 +82,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            app:cardBackgroundColor="#555555"
+            app:cardBackgroundColor="?attr/colorSurfaceContainer"
             app:cardCornerRadius="8dp"
             app:cardElevation="0dp"
             app:strokeWidth="0dp">
@@ -115,11 +96,12 @@
                 android:maxLength="4000"
                 android:background="@null"
                 android:gravity="center_vertical"
-                android:hint="Message..."
+                android:hint="@string/message_hint"
+                android:importantForAutofill="no"
                 android:inputType="textCapSentences|textMultiLine"
                 android:padding="14dp"
-                android:textColor="#FFFFFF"
-                android:textColorHint="#DDDDDD"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="?attr/colorOnSurfaceVariant"
                 android:textSize="16sp" />
 
         </com.google.android.material.card.MaterialCardView>
@@ -130,10 +112,10 @@
             android:layout_height="56dp"
             android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Send message"
+            android:contentDescription="@string/send_message"
             android:padding="8dp"
-            android:src="@android:drawable/ic_media_play"
-            app:tint="#555555" />
+            android:src="@drawable/ic_send"
+            app:tint="?attr/colorPrimary" />
 
     </LinearLayout>
 

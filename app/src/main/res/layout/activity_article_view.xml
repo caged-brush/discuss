@@ -9,28 +9,32 @@
         android:id="@+id/article_view_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp"
         android:textAppearance="?attr/textAppearanceTitleLarge" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:gravity="start"
+        android:paddingHorizontal="@dimen/screen_padding"
+        android:paddingBottom="8dp"
         android:orientation="horizontal">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/shareArticle"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="Share" />
+            android:text="@string/share_article" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/saveToLib"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save to library" />
+            android:text="@string/save_article" />
     </LinearLayout>
 
     <WebView
