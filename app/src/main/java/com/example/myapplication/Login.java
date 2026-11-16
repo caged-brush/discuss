@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,7 +28,9 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
+        ScreenInsets.apply(findViewById(R.id.main));
 
         auth = FirebaseAuth.getInstance();
 
@@ -50,37 +53,37 @@ public class Login extends AppCompatActivity {
         String password = passwordT.getText().toString();
 
         if (email.isEmpty()) {
-            emailT.setError("Email is required");
+            emailT.setError(getString(R.string.email_required));
             emailT.requestFocus();
             return;
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailT.setError("Enter a valid email address");
+            emailT.setError(getString(R.string.invalid_email));
             emailT.requestFocus();
             return;
         }
 
         if (password.isEmpty()) {
-            passwordT.setError("Password is required");
+            passwordT.setError(getString(R.string.password_required));
             passwordT.requestFocus();
             return;
         }
 
         loginButton.setEnabled(false);
-        loginButton.setText("Logging in...");
+        loginButton.setText(getString(R.string.login_in_progress));
 
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
 
                     loginButton.setEnabled(true);
-                    loginButton.setText("Login");
+                    loginButton.setText(R.string.action_login);
 
                     if (task.isSuccessful()) {
 
                         Toast.makeText(
                                 Login.this,
-                                "Login successful!",
+                                getString(R.string.login_success),
                                 Toast.LENGTH_SHORT
                         ).show();
 
@@ -92,7 +95,7 @@ public class Login extends AppCompatActivity {
 
                         Toast.makeText(
                                 Login.this,
-                                "Login failed. Check your credentials.",
+                                getString(R.string.login_failed),
                                 Toast.LENGTH_LONG
                         ).show();
                     }

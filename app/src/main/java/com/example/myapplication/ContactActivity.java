@@ -54,38 +54,38 @@ public class ContactActivity extends SignedInActivity {
 
     private void confirmRemoval(ContactAdapter.Contact contact) {
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Remove contact?")
+                .setTitle(getString(R.string.remove_contact_prompt))
                 .setMessage(contact.name)
-                .setPositiveButton("Remove", (dialog, item) -> {
+                .setPositiveButton(getString(R.string.action_remove), (dialog, item) -> {
                     db.removeContact(currentUid, contact.uid);
                     loadContacts();
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(getString(R.string.action_cancel), null)
                 .show();
     }
 
     private void showAddContactDialog() {
         EditText input = new EditText(this);
         input.setSingleLine(true);
-        input.setHint("Username or UID");
+        input.setHint(getString(R.string.contact_search_hint));
         AlertDialog dialog = new MaterialAlertDialogBuilder(this)
-                .setTitle("Add contact")
+                .setTitle(getString(R.string.add_contact_description))
                 .setView(input)
-                .setPositiveButton("Add", null)
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton(getString(R.string.action_add), null)
+                .setNegativeButton(getString(R.string.action_cancel), null)
                 .show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(view -> {
             String query = input.getText().toString().trim();
             if (query.startsWith("@")) query = query.substring(1);
             String uid = db.findUserUid(query);
             if (uid == null) {
-                input.setError("No local user matches. They must sign in on this device first.");
+                input.setError(getString(R.string.unknown_local_user));
             } else if (uid.equals(currentUid)) {
-                input.setError("Choose another user.");
+                input.setError(getString(R.string.cannot_add_self));
             } else if (db.hasBlockBetween(currentUid, uid)) {
-                input.setError("This user is unavailable while a block is active.");
+                input.setError(getString(R.string.contact_blocked));
             } else if (db.hasContact(currentUid, uid)) {
-                input.setError("This user is already in your contacts.");
+                input.setError(getString(R.string.duplicate_contact));
             } else {
                 db.addContact(currentUid, uid);
                 loadContacts();
@@ -102,12 +102,12 @@ public class ContactActivity extends SignedInActivity {
             }
         }
         MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this)
-                .setTitle("Blocked users")
-                .setPositiveButton("Done", null);
+                .setTitle(getString(R.string.blocked_users))
+                .setPositiveButton(getString(R.string.action_done), null);
         if (blocked.isEmpty()) {
-            dialog.setMessage("You haven't blocked anyone.");
+            dialog.setMessage(getString(R.string.empty_block_list));
         } else {
-            String[] usernames = blocked.stream().map(contact -> "@" + contact.username).toArray(String[]::new);
+            String[] usernames = blocked.stream().map(contact -> getString(R.string.username_handle, contact.username)).toArray(String[]::new);
             dialog.setItems(usernames, (window, position) -> openProfile(blocked.get(position).uid));
         }
         dialog.show();

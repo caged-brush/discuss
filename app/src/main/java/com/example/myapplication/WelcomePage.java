@@ -5,9 +5,6 @@ import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class WelcomePage extends AppCompatActivity {
     @Override
@@ -21,10 +18,6 @@ public class WelcomePage extends AppCompatActivity {
         findViewById(R.id.WelcomePage_SignUp).setOnClickListener(view ->
                 startActivity(new Intent(this, Signup.class)));
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (view, insets) -> {
-            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
-            return insets;
-        });
+        ScreenInsets.apply(findViewById(R.id.main));
     }
 }

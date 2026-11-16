@@ -26,7 +26,7 @@ public class GroupChatActivity extends SignedInActivity {
         groupId = getIntent().getStringExtra(EXTRA_GROUP_ID);
         String name = groupId == null ? null : db.getGroupName(groupId, currentUid);
         if (name == null) {
-            showMessage("This group is unavailable.");
+            showMessage(getString(R.string.group_unavailable));
             finish();
             return;
         }
@@ -46,7 +46,7 @@ public class GroupChatActivity extends SignedInActivity {
             } catch (IllegalArgumentException exception) {
                 composer.setError(exception.getMessage());
             } catch (SQLiteException exception) {
-                showMessage("Unable to send the message. Try again.");
+                showMessage(getString(R.string.send_message_failed));
             }
         });
     }
@@ -61,13 +61,14 @@ public class GroupChatActivity extends SignedInActivity {
         List<MessageAdapter.Message> messages = new ArrayList<>();
         try (Cursor cursor = db.getMessages(groupId, currentUid)) {
             while (cursor.moveToNext()) {
-                messages.add(new MessageAdapter.Message(cursor.getString(0), cursor.getString(1),
+                messages.add(new MessageAdapter.Message(cursor.getLong(5), cursor.getString(0), cursor.getString(1),
                         cursor.getString(2), cursor.getString(3), cursor.getLong(4)));
             }
         }
-        adapter.replaceMessages(messages);
-        findViewById(R.id.chatEmpty).setVisibility(messages.isEmpty() ? View.VISIBLE : View.GONE);
-        if (!messages.isEmpty()) messagesView.scrollToPosition(messages.size() - 1);
+        adapter.submitList(messages, () -> {
+            findViewById(R.id.chatEmpty).setVisibility(messages.isEmpty() ? View.VISIBLE : View.GONE);
+            if (!messages.isEmpty()) messagesView.scrollToPosition(messages.size() - 1);
+        });
     }
 
     private void openMessage(MessageAdapter.Message message) {

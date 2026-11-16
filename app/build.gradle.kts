@@ -33,12 +33,13 @@ android {
 }
 
 dependencies {
-    implementation("com.github.KwabenBerko:News-API-Java:1.0.2")
-    implementation("androidx.webkit:webkit:1.17.1")
-    implementation(platform("com.google.firebase:firebase-bom:35.1.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-database")
-    implementation("com.google.firebase:firebase-auth")
+    implementation(libs.news.api)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.database)
+    implementation(libs.firebase.auth)
+    implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.livedata)
 
     implementation(libs.activity.ktx)
     implementation(libs.appcompat)

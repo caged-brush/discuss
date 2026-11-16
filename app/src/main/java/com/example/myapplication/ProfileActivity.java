@@ -12,7 +12,6 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
-import java.util.Locale;
 
 public class ProfileActivity extends SignedInActivity {
     static final String EXTRA_UID = "profile_uid";
@@ -32,7 +31,7 @@ public class ProfileActivity extends SignedInActivity {
 
         try (Cursor cursor = db.getUser(targetUid)) {
             if (!cursor.moveToFirst()) {
-                showMessage("Profile unavailable.");
+                showMessage(getString(R.string.profile_unavailable));
                 finish();
                 return;
             }
@@ -41,7 +40,7 @@ public class ProfileActivity extends SignedInActivity {
             name.setText(user.name);
             username = user.username;
             TextView handle = findViewById(R.id.profileUsername);
-            handle.setText("@" + username);
+            handle.setText(getString(R.string.username_handle, username));
         }
 
         rateButton = findViewById(R.id.rateUser);
@@ -66,19 +65,19 @@ public class ProfileActivity extends SignedInActivity {
         RatingBar ratingBar = findViewById(R.id.ratingBarUser);
         ratingBar.setRating((float) rating);
         TextView average = findViewById(R.id.averageRating);
-        average.setText(rating == 0 ? "No ratings yet"
-                : String.format(Locale.getDefault(), "Average rating %.1f / 5", rating));
+        average.setText(rating == 0 ? getString(R.string.no_ratings)
+                : getString(R.string.average_rating, rating));
 
         rateButton.setVisibility(peer && !blockActive ? View.VISIBLE : View.GONE);
         blockButton.setVisibility(peer ? View.VISIBLE : View.GONE);
-        blockButton.setText(blockedByMe ? "Unblock user" : "Block user");
+        blockButton.setText(blockedByMe ? getString(R.string.unblock_user) : getString(R.string.block_user));
         articlesView.removeAllViews();
         if (blockActive) {
-            addArticleStatus("Articles are unavailable while a block is active.");
+            addArticleStatus(getString(R.string.articles_blocked));
             return;
         }
         List<SavedArticle> articles = SavedArticle.load(db, targetUid);
-        if (articles.isEmpty()) addArticleStatus("No saved articles yet.");
+        if (articles.isEmpty()) addArticleStatus(getString(R.string.no_saved_articles));
         for (SavedArticle article : articles) {
             Button row = new MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
             row.setText(article.title);
@@ -94,9 +93,13 @@ public class ProfileActivity extends SignedInActivity {
     }
 
     private void showRatingDialog() {
-        String[] values = {"1 star", "2 stars", "3 stars", "4 stars", "5 stars"};
+        String[] values = new String[5];
+        for (int i = 0; i < values.length; i++) {
+            int stars = i + 1;
+            values[i] = getResources().getQuantityString(R.plurals.rating_stars, stars, stars);
+        }
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Rate @" + username)
+                .setTitle(getString(R.string.rate_user_prompt, username))
                 .setSingleChoiceItems(values, db.getUserRating(currentUid, targetUid) - 1, (dialog, item) -> {
                     try {
                         db.rateUser(currentUid, targetUid, item + 1);
@@ -106,23 +109,23 @@ public class ProfileActivity extends SignedInActivity {
                     }
                     dialog.dismiss();
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(getString(R.string.action_cancel), null)
                 .show();
     }
 
     private void confirmBlockChange() {
         boolean blocked = db.isBlockedBy(currentUid, targetUid);
-        String action = blocked ? "Unblock" : "Block";
+        String action = blocked ? getString(R.string.action_unblock) : getString(R.string.action_block);
         new MaterialAlertDialogBuilder(this)
-                .setTitle(action + " @" + username + "?")
-                .setMessage(blocked ? "Group messages from this user will be visible when both users have unblocked each other."
-                        : "Your group messages will be hidden from each other, and new invites and ratings between you will be disabled.")
+                .setTitle(getString(blocked ? R.string.unblock_prompt : R.string.block_prompt, username))
+                .setMessage(blocked ? getString(R.string.unblock_explanation)
+                        : getString(R.string.block_explanation))
                 .setPositiveButton(action, (dialog, item) -> {
                     if (blocked) db.unblockUser(currentUid, targetUid);
                     else db.blockUser(currentUid, targetUid);
                     refresh();
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(getString(R.string.action_cancel), null)
                 .show();
     }
 }

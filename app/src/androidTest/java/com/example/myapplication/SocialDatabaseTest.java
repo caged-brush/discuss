@@ -131,13 +131,63 @@ public class SocialDatabaseTest {
         db.close();
 
         db = new DBHandler(context, databaseName);
-        assertEquals(2, db.getReadableDatabase().getVersion());
+        assertEquals(4, db.getReadableDatabase().getVersion());
         assertEquals(BOB, db.findUserUid("Bob"));
         assertEquals(1, count(db.getContacts(ALICE)));
         assertEquals(4.0, db.getAverageRating(BOB), 0);
         assertEquals(1, count(db.getGroups(ALICE)));
         db.sendMessage("legacy-group", ALICE, "After upgrade");
         assertEquals(1, count(db.getMessages("legacy-group", ALICE)));
+    }
+
+    @Test
+    public void upgradingLocalAuthV3PreservesChatAndCatalogData() {
+        db.createGroup("legacy-group", "Legacy group", ALICE);
+        SQLiteDatabase sqlite = db.getWritableDatabase();
+        sqlite.execSQL("DROP TABLE messages");
+        sqlite.execSQL("DROP TABLE article_ratings");
+        sqlite.execSQL("DROP TABLE articles");
+        sqlite.execSQL("CREATE TABLE articles (article_id TEXT PRIMARY KEY, title TEXT, category TEXT)");
+        sqlite.execSQL("CREATE TABLE article_ratings (article_id TEXT REFERENCES articles(article_id), "
+                + "user_uid TEXT, rating INTEGER)");
+        sqlite.execSQL("CREATE TABLE saved_articles (uid TEXT, article_id TEXT REFERENCES articles(article_id))");
+        sqlite.execSQL("CREATE TABLE messages (message_id INTEGER PRIMARY KEY, group_id TEXT, "
+                + "sender_uid TEXT, body TEXT, article_id TEXT REFERENCES articles(article_id), "
+                + "sent_at INTEGER, media_path TEXT)");
+        sqlite.execSQL("CREATE INDEX messages_by_group ON messages(group_id, sent_at)");
+        sqlite.execSQL("INSERT INTO articles VALUES ('old-article', 'Catalog story', 'News')");
+        sqlite.execSQL("INSERT INTO saved_articles VALUES (?, 'old-article')", new Object[]{ALICE});
+        sqlite.execSQL("INSERT INTO article_ratings VALUES ('old-article', ?, 4)", new Object[]{ALICE});
+        sqlite.execSQL("INSERT INTO messages VALUES (1, 'legacy-group', ?, 'Original message', null, 100, null)",
+                new Object[]{ALICE});
+        sqlite.execSQL("INSERT INTO messages VALUES (2, 'legacy-group', ?, '', 'old-article', 200, null)",
+                new Object[]{ALICE});
+        sqlite.execSQL("INSERT INTO messages VALUES (3, 'legacy-group', ?, '', null, 300, 'photo.jpg')",
+                new Object[]{ALICE});
+        sqlite.setVersion(3);
+        db.close();
+
+        db = new DBHandler(context, databaseName);
+        sqlite = db.getReadableDatabase();
+        assertEquals(4, sqlite.getVersion());
+        assertEquals(0, count(sqlite.rawQuery("PRAGMA foreign_key_check", null)));
+        assertEquals(1, count(sqlite.rawQuery("SELECT * FROM saved_articles JOIN legacy_articles USING(article_id)", null)));
+        assertEquals(1, count(sqlite.rawQuery("SELECT * FROM legacy_article_ratings", null)));
+        assertEquals(1, count(sqlite.rawQuery("SELECT * FROM legacy_messages WHERE media_path = 'photo.jpg'", null)));
+        try (Cursor history = db.getMessages("legacy-group", ALICE)) {
+            assertTrue(history.moveToNext());
+            assertEquals("Original message", history.getString(2));
+            assertEquals(100, history.getLong(4));
+            assertTrue(history.moveToNext());
+            assertEquals("Catalog story", history.getString(2));
+            assertTrue(history.moveToNext());
+            assertEquals("Legacy attachment", history.getString(2));
+            assertFalse(history.moveToNext());
+        }
+        db.saveArticle("Current story", null, null, URL, ALICE);
+        assertEquals(1, count(db.getSavedArticles(ALICE)));
+        db.sendMessage("legacy-group", ALICE, "After upgrade");
+        assertEquals(4, count(db.getMessages("legacy-group", ALICE)));
     }
 
     private static int count(Cursor cursor) {

@@ -30,7 +30,7 @@ public class ArticleView extends SignedInActivity {
         if (isFinishing()) return;
         String url = getIntent().getStringExtra("url");
         if (!isArticleUrl(url)) {
-            showMessage("Article unavailable.");
+            showMessage(getString(R.string.article_unavailable));
             finish();
             return;
         }
@@ -48,7 +48,7 @@ public class ArticleView extends SignedInActivity {
         save.setOnClickListener(view -> {
             db.saveArticle(articleTitle, getIntent().getStringExtra("author"),
                     getIntent().getStringExtra("desc"), url, currentUid);
-            showMessage("Article saved to your library.");
+            showMessage(getString(R.string.article_saved));
         });
 
         findViewById(R.id.shareArticle).setOnClickListener(view -> {

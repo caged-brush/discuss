@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,7 +28,9 @@ public class Signup extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_in);
+        ScreenInsets.apply(findViewById(R.id.main));
 
         auth = FirebaseAuth.getInstance();
 
@@ -56,45 +59,45 @@ public class Signup extends AppCompatActivity {
                 passwordT.getText().toString();
 
         if (username.isEmpty()) {
-            usernameT.setError("Username is required");
+            usernameT.setError(getString(R.string.username_required));
             usernameT.requestFocus();
             return;
         }
 
         if (email.isEmpty() ||
                 !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailT.setError("Enter a valid email address");
+            emailT.setError(getString(R.string.invalid_email));
             emailT.requestFocus();
             return;
         }
 
         if (password.length() < 6) {
             passwordT.setError(
-                    "Password must be at least 6 characters"
+                    getString(R.string.short_password)
             );
             passwordT.requestFocus();
             return;
         }
 
         signupButton.setEnabled(false);
-        signupButton.setText("Creating account...");
+        signupButton.setText(getString(R.string.signup_in_progress));
 
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
 
                     if (!task.isSuccessful()) {
                         signupButton.setEnabled(true);
-                        signupButton.setText("Create Account");
+                        signupButton.setText(getString(R.string.action_create_account));
 
                         Log.w(TAG, "Signup failed",
                                 task.getException());
 
                         Toast.makeText(
                                 Signup.this,
-                                "Signup failed: " +
+                                getString(R.string.signup_failed,
                                         (task.getException() != null
                                                 ? task.getException().getMessage()
-                                                : "Unknown error"),
+                                                : getString(R.string.unknown_error))),
                                 Toast.LENGTH_LONG
                         ).show();
                         return;
@@ -104,9 +107,9 @@ public class Signup extends AppCompatActivity {
 
                     if (user == null) {
                         signupButton.setEnabled(true);
-                        signupButton.setText("Create Account");
+                        signupButton.setText(getString(R.string.action_create_account));
                         Toast.makeText(this,
-                                "Account created, but user unavailable",
+                                getString(R.string.signup_user_unavailable),
                                 Toast.LENGTH_LONG).show();
                         return;
                     }
@@ -124,13 +127,13 @@ public class Signup extends AppCompatActivity {
                                             profileTask.getException());
                                     Toast.makeText(
                                             Signup.this,
-                                            "Account created, but username could not be saved",
+                                            getString(R.string.signup_display_name_failed),
                                             Toast.LENGTH_LONG
                                     ).show();
                                 } else {
                                     Toast.makeText(
                                             Signup.this,
-                                            "Account created successfully!",
+                                            getString(R.string.signup_success),
                                             Toast.LENGTH_SHORT
                                     ).show();
                                 }

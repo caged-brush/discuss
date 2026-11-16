@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.ArrayList;
-
 public class ArticleBrowse extends SignedInActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,19 +19,19 @@ public class ArticleBrowse extends SignedInActivity {
         setContentView(R.layout.activity_article_browse);
 
         RecyclerView recycler = findViewById(R.id.article_browse_recycler);
-        ArticleBrowseRecyclerAdapter adapter = new ArticleBrowseRecyclerAdapter(new ArrayList<>(), this);
+        ArticleBrowseRecyclerAdapter adapter = new ArticleBrowseRecyclerAdapter();
         recycler.setAdapter(adapter);
 
         TextView status = findViewById(R.id.articleStatus);
         News_Fetcher news = new ViewModelProvider(this).get(News_Fetcher.class);
         news.getArticles().observe(this, articles -> {
-            adapter.updateData(articles);
-            status.setText("No articles found.");
+            adapter.submitList(articles);
+            status.setText(getString(R.string.no_articles));
             status.setVisibility(articles.isEmpty() ? View.VISIBLE : View.GONE);
         });
         news.getError().observe(this, error -> {
-            if (error != null) {
-                status.setText("Unable to load articles. Try refreshing.");
+            if (Boolean.TRUE.equals(error)) {
+                status.setText(getString(R.string.article_load_error));
                 status.setVisibility(View.VISIBLE);
             }
         });
@@ -47,8 +45,8 @@ public class ArticleBrowse extends SignedInActivity {
                 startActivity(new Intent(this, GroupListActivity.class)));
         findViewById(R.id.accountMenu).setOnClickListener(view ->
                 new MaterialAlertDialogBuilder(this)
-                        .setTitle("Account")
-                        .setItems(new String[]{"My profile", "Sign out"}, (dialog, item) -> {
+                        .setTitle(getString(R.string.account_title))
+                        .setItems(new String[]{getString(R.string.my_profile), getString(R.string.sign_out)}, (dialog, item) -> {
                             if (item == 0) startActivity(new Intent(this, ProfileActivity.class));
                             else signOut();
                         })
@@ -56,7 +54,7 @@ public class ArticleBrowse extends SignedInActivity {
     }
 
     private void fetchArticles(News_Fetcher news, TextView status) {
-        status.setText("Loading articles…");
+        status.setText(getString(R.string.loading_articles));
         status.setVisibility(View.VISIBLE);
         news.fetchArticles("economics + europe");
     }
